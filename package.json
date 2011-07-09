@@ -6,7 +6,8 @@
 	"homepage": "http://www.github.com/kbjr/polyfill.js",
 	"dependencies": {
 		"gzip": ">=0.1.0",
-		"uglify-js": ">=1.0.2"
+		"uglify-js": ">=1.0.2",
+		"bufferjs": ">=1.0.1"
 	},
 	"repository": {
 		"type": "git",

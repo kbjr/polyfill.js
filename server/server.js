@@ -1,3 +1,6 @@
+// Clear old cache files
+(require('./clear-cache')());
+
 var
 
 // Needed modules
@@ -8,6 +11,7 @@ http = require('http'),
 path = require('path'),
 gzip = require('gzip'),
 uglify = require('uglify-js'),
+bufferjs = require('bufferjs'),
 
 // File path constants
 CLIENT_PATH = path.join(__dirname, '../client'),
@@ -32,15 +36,15 @@ server = http.createServer(function(req, res) {
 			return urlData;
 		}()),
 		responseHeaders: {
-			'content-type': 'text/plain'
+			'Content-Type': 'text/plain'
 		},
 		isJavaScript: function() {
-			handle.responseHeaders['content-type'] = 'application/javascript';
+			handle.responseHeaders['Content-Type'] = 'application/javascript';
 		},
 		gzipSupport: null,
 		isGzip: function() {
 			handle.gzipSupport = true;
-			handle.responseHeaders['content-encoding'] = 'gzip';
+			handle.responseHeaders['Content-Encoding'] = 'gzip';
 		},
 		error: function(err, msg) {
 			handleError(handle, err, msg);
@@ -83,18 +87,31 @@ server = http.createServer(function(req, res) {
 		
 		// Handle loading polyfills
 		case 'polyfill':
-			var neededPolyfills = (urlData.query.which || '').split(',');
-			server.ok(handle, 'application/javascript', [
-				'/*',
-				'  Loading the following polyfills:',
-				'    ' + (urlData.query.which || ''),
-				' */'
-			].join('\n'));
+			var polyfills = (urlData.query.p || '').split(',').sort();
+			var cacheFile = polyfills.join(',') + '.js';
+			var content = null;
+			(function getNext() {
+				var next = polyfills.shift();
+				loadJavaScriptFiles(handle, next + '.js', POLYFILL_PATH, POLYFILL_CACHE_PATH, function(err, data) {
+					if (err) {
+						handle.error(err[0], err[1]);
+					} else {
+						data = Buffer.concat(new Buffer(
+							'Polyfill.loaded("' + next + '");'
+						));
+						if (content) {
+							content = data;
+						} else {
+							content = Buffer.concat(content, data);
+						}
+					}
+				});
+			}());
 		break;
 		
 		// Unknown route
 		default:
-			server.notFound(res, null, 'Unknown route ' + urlData.pathname);
+			server.notFound(handle, 'Unknown route ' + handle.url.pathname);
 		break;
 	}
 	
@@ -117,7 +134,7 @@ function supportsGzip(handle) {
 			encodings = encodings.split(',');
 			for (var i = 0, c = encodings.length; i < c; i++) {
 				if (encodings[i].trim() === 'gzip') {
-					handle.gzipSupport = true;
+					handle.isGzip();
 					return;
 				}
 			}
@@ -138,6 +155,17 @@ function handleError(handle, error, msg) {
 	server.internalError(handle, msg);
 };
 
+// Shortcut for reading a file and casting to string
+function readFile(file, after) {
+	if (typeof after === 'function') {
+		fs.readFile(file, function(err, data) {
+			return after(err, data);
+		});
+	} else {
+		return fs.readFileSync(file);
+	}
+};
+
 // Load a JavaScript file
 function loadJavaScriptFile(handle, file, sourceDir, cacheDir, after) {
 	// File paths
@@ -150,8 +178,8 @@ function loadJavaScriptFile(handle, file, sourceDir, cacheDir, after) {
 		// Minify the original source if not yet done...
 		if (! exists) {
 			try {
-				var orig = fs.readFileSync(srcFile);
-				ugly = uglify(String(orig));
+				var orig = String(readFile(srcFile));
+				ugly = uglify(orig);
 				fs.writeFileSync(minFile, ugly);
 			} catch (err) {
 				return after([err, 'Error: Could not uglify core.js']);
@@ -160,7 +188,7 @@ function loadJavaScriptFile(handle, file, sourceDir, cacheDir, after) {
 		// ...or read the already minified source
 		else {
 			try {
-				ugly = fs.readFileSync(minFile);
+				ugly = readFile(minFile);
 			} catch (err) {
 				return after([err, 'Error: Could not read core.js.min']);
 			}
@@ -174,14 +202,16 @@ function loadJavaScriptFile(handle, file, sourceDir, cacheDir, after) {
 						if (err) {
 							return after([err, 'Error: Could not gzip source code']);
 						}
-						after(null, String(data));
+						fs.writeFile(gzFile, data);
+						after(null, data);
 					});
 				} else {
-					fs.readFile(gzFile, function(err, data) {
+					// Read cached gzip source file
+					readFile(gzFile, function(err, data) {
 						if (err) {
 							return after([err, 'Error: Could not read core.js.min.gz']);
 						}
-						after(null, String(data));
+						after(null, data);
 					});
 				}
 			});
