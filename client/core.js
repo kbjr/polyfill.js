@@ -1,6 +1,9 @@
 window.Polyfill = (function() {
 	var self = { };
 	
+	// The URL used to load polyfills
+	var POLYFILL_URL = 'http://polyfill.herokuapp.com/polyfill?p=';
+	
 // ----------------------------------------------------------------------------
 //  External Interface
 	
@@ -14,8 +17,8 @@ window.Polyfill = (function() {
 	self.needs = function() {
 		var args = Array.prototype.slice.call(arguments);
 		var needed = [ ];
-		for (var i = 0, c = args.length; i < c; i++) {
-			var polyfill = polyfills[args[i]];
+		while (args.length) {
+			var polyfill = polyfills[args.shift()];
 			if (! polyfill) {
 				throw new Error('No such polyfill "' + test + '"');
 			}
@@ -25,11 +28,14 @@ window.Polyfill = (function() {
 				} else {
 					polyfill.state = 'loading';
 					needed.push(polyfill.name);
-					needed.push.apply(polyfill.prereqs);
+					args.push.apply(args, polyfill.prereqs);
 				}
 			}
 		}
-		
+		needed = unique(needed);
+		if (needed.length) {
+			loadScript(POLYFILL_URL + needed.join(','));
+		}
 	};
 	
 	/**
@@ -61,6 +67,50 @@ window.Polyfill = (function() {
 			}
 			return flag;
 		};
+	};
+	
+	/**
+	 * Tests if an array contains a value
+	 */
+	var contains = (function() {
+		if (Array.prototype.indexOf) {
+			return function(arr, item) {
+				return (arr.indexOf(item) > -1);
+			};
+		} else {
+			return function(arr, item) {
+				for (var i = 0, c = arr.length; i < c; i++) {
+					if (arr[i] === item) {
+						return true;
+					}
+				}
+				return false;
+			};
+		}
+	};
+	
+	/**
+	 * Filters an array, leaving only unique values
+	 */
+	var unique = function(arr) {
+		var result = [ ];
+		for (var i = 0, c = arr.length; i < c; i++) {
+			if (! contains(result, arr[i])) {
+				result.push(arr[i]);
+			}
+		}
+		return result;
+	};
+	
+	/**
+	 * Loads a JavaScript file by url
+	 */
+	var loadScript = function(source) {
+		var script = document.createElement('script');
+		var head = document.getElementsByTagName('head')[0];
+		script.type = 'text/javascript';
+		script.src = source;
+		head.appendChild(script);
 	};
 	
 	/**
@@ -102,7 +152,8 @@ window.Polyfill = (function() {
 		storage: {
 			test: function() {
 				return (!! window.localStorage);
-			}
+			},
+			prereqs: ['json']
 		}
 		
 	};

@@ -53,12 +53,12 @@ server = http.createServer(function(req, res) {
 	
 	switch (handle.url.segments[1]) {
 		case '':
-			server.ok(handle, [
+			var body = [
 				'Server is ready.',
 				'',
-				'To use polyfill.js, load http://polyfill.herokuapps.com/core in your website, eg.',
+				'To use polyfill.js, load http://polyfill.herokuapp.com/core in your website, eg.',
 				'',
-				'  <script type="text/javascript" src="http://polyfill.herokuapps.com/core"></script>',
+				'  <script type="text/javascript" src="http://polyfill.herokuapp.com/core"></script>',
 				'',
 				'Then, in your JavaScript, tell the system which features you need, like so:',
 				'',
@@ -70,8 +70,22 @@ server = http.createServer(function(req, res) {
 				'Alternately, you can also load ALL appropriate polyfills for the current browser by calling',
 				'Polyfill.needs("*"), but this is not suggested as it may load code you do not need.',
 				'',
-				'Enjoy using polyfill.js :)'
-			].join('\n'));
+				'Enjoy using polyfill.js :)',
+				'',
+				'',
+				'Available Polyfills:',
+				''
+			];
+			fs.readdir(POLYFILL_PATH, function(err, files) {
+				if (! err) {
+					for (var i = 0, c = files.length; i < c; i++) {
+						var file = files[i].split('.');
+						file.pop();
+						body.push(' + ' + file);
+					}
+				}
+				server.ok(handle, body.join('\n'));
+			});
 		break;
 		
 		// Handle loading the core
