@@ -78,7 +78,7 @@ server.ok = function(res, headers, body) {
 
 // Sends a 404 Not Found
 server.notFound = function(res, headers, body) {
-	server.respond(res, 404, headers, body):
+	server.respond(res, 404, headers, body);
 };
 
 /* End of file server.js */
