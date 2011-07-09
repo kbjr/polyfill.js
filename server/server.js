@@ -33,7 +33,7 @@ server = http.createServer(function(req, res) {
 			server.ok(res, headers, [
 				'/*',
 				'  Loading the following polyfills:',
-				'    ' + (urlData.query.which || ''),
+				'    ' + (urlData.querystring.which || ''),
 				' */'
 			].join('\n');
 		break;
