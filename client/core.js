@@ -16,6 +16,14 @@ window.Polyfill = (function() {
 	 */
 	self.needs = function() {
 		var args = Array.prototype.slice.call(arguments);
+		if (args[0] === '*') {
+			args = [ ];
+			for (var i in polyfills) {
+				if (polyfills.hasOwnProperty(i)) {
+					args.push(i);
+				}
+			}
+		}
 		var needed = [ ];
 		while (args.length) {
 			var polyfill = polyfills[args.shift()];
@@ -87,7 +95,7 @@ window.Polyfill = (function() {
 				return false;
 			};
 		}
-	};
+	}());
 	
 	/**
 	 * Filters an array, leaving only unique values

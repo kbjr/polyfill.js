@@ -96,33 +96,59 @@ server = http.createServer(function(req, res) {
 		
 		// Handle loading the core
 		case 'core':
-			loadJavaScriptFile(handle, CORE_FILE, CLIENT_PATH, CLIENT_PATH, function(err, data) {
+			loadJavaScriptFile(CORE_FILE, CLIENT_PATH, CLIENT_PATH, function(err, data) {
 				if (err) {
-					handle.error(err[0], err[1]);
+					return handle.error(err[0], err[1]);
 				}
-				handle.isJavaScript();
-				server.ok(handle, data);
+				// If it needs gzip, handle that...
+				if (supportsGzip(handle)) {
+					gzipJavaScriptFile(data, CORE_FILE, CLIENT_PATH, function(err, data) {
+						if (err) {
+							return handle.error(err[0], err[1]);
+						}
+						handle.isJavaScript();
+						server.ok(handle, data);
+					});
+				} else {
+					handle.isJavaScript();
+					server.ok(handle, data);
+				}
 			}); 
 		break;
 		
 		// Handle loading polyfills
 		case 'polyfill':
-			var polyfills = (urlData.query.p || '').split(',').sort();
+			if (! (handle.url.query.p && handle.url.query.p.length)) {
+				return server.notFound(handle, '// Error 404: Not Found\n// No polyfills given');
+			}
+			var polyfills = handle.url.query.p.split(',').sort();
 			var cacheFile = polyfills.join(',') + '.js';
-			var content = null;
+			var content = '';
 			(function getNext() {
 				var next = polyfills.shift();
-				loadJavaScriptFiles(handle, next + '.js', POLYFILL_PATH, POLYFILL_CACHE_PATH, function(err, data) {
+				if (! path.existsSync(path.join(POLYFILL_PATH, next) + '.js')) {
+					return server.notFound(handle, '// Error 404: Not Found\n// Polyfill "' + next + '" does not exist');
+				}
+				loadJavaScriptFile(next + '.js', POLYFILL_PATH, POLYFILL_CACHE_PATH, function(err, data) {
 					if (err) {
-						handle.error(err[0], err[1]);
+						return handle.error(err[0], err[1]);
+					}
+					content += String(data) + ';Polyfill.loaded("' + next + '");'
+					if (polyfills.length) {
+						getNext();
 					} else {
-						data = Buffer.concat(new Buffer(
-							'Polyfill.loaded("' + next + '");'
-						));
-						if (content) {
-							content = data;
+						content = uglify(content);
+						if (supportsGzip(handle)) {
+							gzipJavaScriptFile(content, cacheFile, POLYFILL_CACHE_PATH, function(err, data) {
+								if (err) {
+									return handle.error(err[0], err[1]);
+								}
+								handle.isJavaScript();
+								server.ok(handle, data);
+							});
 						} else {
-							content = Buffer.concat(content, data);
+							handle.isJavaScript();
+							server.ok(handle, content);
 						}
 					}
 				});
@@ -166,7 +192,8 @@ function supportsGzip(handle) {
 
 // Log an error
 function logError(error) {
-	sys.puts('[E ' + Date() + '] ' + error);
+	sys.puts('[E] ' + error);
+	console.trace();
 };
 
 // Log an error and respond to the client
@@ -175,71 +202,61 @@ function handleError(handle, error, msg) {
 	server.internalError(handle, msg);
 };
 
-// Shortcut for reading a file and casting to string
-function readFile(file, after) {
-	if (typeof after === 'function') {
-		fs.readFile(file, function(err, data) {
-			return after(err, data);
-		});
-	} else {
-		return fs.readFileSync(file);
-	}
-};
+// Do file gzipping and storage
+function gzipJavaScriptFile(ugly, file, cacheDir, after) {
+	// File paths
+	var gzFile = path.join(cacheDir, file) + MIN_EXT + GZIP_EXT;
+	path.exists(gzFile, function(exists) {
+		if (! exists) {
+			// Gzip the source
+			gzip(ugly, 9, function(err, data) {
+				if (err) {
+					return after([err, 'Error: Could not gzip source code']);
+				}
+				fs.writeFile(gzFile, data);
+				after(null, data);
+			});
+		} else {
+			// Read cached gzip source file
+			fs.readFile(gzFile, function(err, data) {
+				if (err) {
+					return after([err, 'Error: Could not read ' + file + '.min.gz']);
+				}
+				after(null, data);
+			});
+		}
+	});
+}
 
 // Load a JavaScript file
-function loadJavaScriptFile(handle, file, sourceDir, cacheDir, after) {
+function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 	// File paths
 	var srcFile = path.join(sourceDir, file);
 	var minFile = path.join(cacheDir, file) + MIN_EXT;
-	var gzFile  = minFile + GZIP_EXT;
 	// Check if the minified file already exists
 	path.exists(minFile, function(exists) {
 		var ugly;
 		// Minify the original source if not yet done...
 		if (! exists) {
 			try {
-				var orig = String(readFile(srcFile));
+				var orig = String(
+					fs.readFileSync(srcFile)
+				);
 				ugly = uglify(orig);
 				fs.writeFileSync(minFile, ugly);
 			} catch (err) {
-				return after([err, 'Error: Could not uglify core.js']);
+				return after([err, 'Error: Could not uglify ' + file]);
 			}
 		}
 		// ...or read the already minified source
 		else {
 			try {
-				ugly = readFile(minFile);
+				ugly = fs.readFileSync(minFile);
 			} catch (err) {
-				return after([err, 'Error: Could not read core.js.min']);
+				return after([err, 'Error: Could not read ' + file + '.min']);
 			}
 		}
-		// If it needs gzip, handle that...
-		if (supportsGzip(handle)) {
-			path.exists(gzFile, function(exists) {
-				if (! exists) {
-					// Gzip the source
-					gzip(ugly, 9, function(err, data) {
-						if (err) {
-							return after([err, 'Error: Could not gzip source code']);
-						}
-						fs.writeFile(gzFile, data);
-						after(null, data);
-					});
-				} else {
-					// Read cached gzip source file
-					readFile(gzFile, function(err, data) {
-						if (err) {
-							return after([err, 'Error: Could not read core.js.min.gz']);
-						}
-						after(null, data);
-					});
-				}
-			});
-		}
-		// ...otherwise, continue with basic minified
-		else {
-			after(null, ugly);
-		}
+		after(null, ugly);
 	});
 };
 

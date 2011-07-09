@@ -6,7 +6,7 @@ if (! window.localStorage) {
 	
 	var
 	
-	read, write, del, clear, storage,
+	storage, read, write, del,
 	
 	/**
 	 * Check for the globalStorage model
@@ -24,7 +24,33 @@ if (! window.localStorage) {
 		try {
 			return (typeof document.documentElement.addBehavior === 'function');
 		} catch (e) { return false; }
-	}());
+	}()),
+	
+	/**
+	 * Encode a value for storage
+	 */
+	encode = function(value, cookieMode) {
+		value = JSON.stringify(value);
+		if (cookieMode) {
+			value = value.replace(/[;\r\n= %]/g, function(ch) {
+				return "%" + ";\r\n= %".indexOf(ch);
+			});
+		}
+		return value;
+	},
+	
+	/**
+	 * Decode a value from storage
+	 */
+	decode = function(value, cookieMode) {
+		if (cookieMode) {
+			value = value.replace(/%[0-5]/g, function(ch) {
+				return ";\r\n= %".charAt(parseFloat(ch.slice(1)));
+			});
+		}
+		value = JSON.parse(value);
+		return value;
+	};
 
 // ----------------------------------------------------------------------------
 //  External Interface
@@ -33,17 +59,19 @@ if (! window.localStorage) {
 		
 		var
 		name = name,
-		data = read(name)
+		data = read(name);
 		
 		this.length = 0;
 		
 		this.clear = function() {
-			clear();
 			this.length = 0;
+			data = { };
+			write(name, data);
 		};
 		
 		this.getItem = function(key) {
-		
+			data = read(name);
+			return data[key];
 		};
 		
 		this.key = function(key) {
@@ -57,12 +85,16 @@ if (! window.localStorage) {
 			return null;
 		};
 		
-		this.removeItem = function() {
-		
+		this.removeItem = function(key) {
+			data = read(name);
+			delete data[key];
+			write(name, data);
 		};
 		
-		this.setItem = function() {
-		
+		this.setItem = function(key, value) {
+			data = read(name);
+			data[key] = value;
+			write(name, data);
 		};
 		
 	};
@@ -77,7 +109,23 @@ if (! window.localStorage) {
 	 */
 	if (hasGlobalStorage) {
 		
+		storage = window.globalStorage[window.location.hostname];
 		
+		write = function(key, value) {
+			storage[key] = encode(value);
+		};
+		
+		read = function(key) {
+			var value = storage[key] && storage[key].value;
+			if (value) {
+				value = value;
+			}
+			return decode(value);
+		};
+		
+		del = function(key) {
+			delete storage[key];
+		};
 		
 	}
 	
@@ -86,7 +134,34 @@ if (! window.localStorage) {
 	 */
 	else if (hasUserData) {
 		
-		
+		storage = doc.createElement('div');
+
+		var withStore = function(func) {
+			return function() {
+				doc.body.appendChild(storage);
+				storage.addBehavior('#default#userData');
+				storage.load('Storage');
+				var args = Array.prototype.slice.call(arguments, 0);
+				args.unshift(storage);
+				result = func.apply(win, args);
+				doc.body.removeChild(storage);
+				return result;
+			};
+		};
+
+		write = withStore(function(storage, name, value) {
+			storage.setAttribue(name, encode(value));
+			storage.save('Storage');
+		});
+
+		read = withStore(function(storage, name) {
+			return decode(storage.getAttribute(name));
+		});
+
+		del = withStore(function(storage, name) {
+			storage.removeAttribute(name);
+			storage.save('Storage');
+		});
 		
 	}
 	
@@ -95,7 +170,19 @@ if (! window.localStorage) {
 	 */
 	else {
 		
+		write = function(key, value) {
+			value = encode(value, true);
+		};
 		
+		read = function(key) {
+			var value = '...';
+			
+			return decode(value, true);
+		};
+		
+		del = function(key) {
+			
+		};
 		
 	}
 	
