@@ -8,7 +8,7 @@ path = require('path'),
 // Create the http server
 server = http.createServer(function(req, res) {
 	
-	var urlData = url.parse(req.url);
+	var urlData = url.parse(req.url, true);
 	if (urlData.pathname === '') {
 		urlData.pathname = '/';
 	}
@@ -30,7 +30,12 @@ server = http.createServer(function(req, res) {
 			var headers = {
 				'Content-Type': 'application/javascript'
 			};
-			server.ok(res, headers, '/* Loading the polyfill.js core. */');
+			server.ok(res, headers, [
+				'/*',
+				'  Loading the following polyfills:',
+				'    ' + (urlData.query.which || ''),
+				' */'
+			].join('\n');
 		break;
 		default:
 			server.notFound(res, null, 'Unknown route ' + urlData.pathname);
