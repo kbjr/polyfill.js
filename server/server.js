@@ -56,25 +56,9 @@ server = http.createServer(function(req, res) {
 			var body = [
 				'Server is ready.',
 				'',
-				'To use polyfill.js, load http://polyfill.herokuapp.com/core in your website, eg.',
+				'-------------------------------------------------------------------------------------------',
 				'',
-				'  <script type="text/javascript" src="http://polyfill.herokuapp.com/core"></script>',
-				'',
-				'Then, in your JavaScript, tell the system which features you need, like so:',
-				'',
-				'  Polyfill.needs("json", "placeholder", "storage");',
-				'',
-				'You can call Polyfill.needs multiple times, but each call will create a new HTTP request,',
-				'so combining them into a single call is most efficient.',
-				'',
-				'Alternately, you can also load ALL appropriate polyfills for the current browser by calling',
-				'Polyfill.needs("*"), but this is not suggested as it may load code you do not need.',
-				'',
-				'Enjoy using polyfill.js :)',
-				'',
-				'',
-				'Available Polyfills:',
-				''
+				'Available Polyfills:'
 			];
 			fs.readdir(POLYFILL_PATH, function(err, files) {
 				if (! err) {
@@ -84,6 +68,28 @@ server = http.createServer(function(req, res) {
 						body.push(' + ' + file);
 					}
 				}
+				body.push(
+					'',
+					'-------------------------------------------------------------------------------------------',
+					'',
+					'To use polyfill.js, load http://polyfill.herokuapp.com/core in your website, eg.',
+					'',
+					'  <script type="text/javascript" src="http://polyfill.herokuapp.com/core"></script>',
+					'',
+					'Then, in your JavaScript, tell the system which features you need, like so:',
+					'',
+					'  Polyfill.needs("json", "placeholder", "storage");',
+					'',
+					'You can call Polyfill.needs multiple times, but each call will create a new HTTP request,',
+					'so combining them into a single call is most efficient.',
+					'',
+					'Alternately, you can also load ALL appropriate polyfills for the current browser by calling',
+					'Polyfill.needs("*"), but this is not suggested as it may load code you do not need.',
+					'',
+					'Enjoy using polyfill.js :)',
+					' - James Brumond',
+					''
+				);
 				server.ok(handle, body.join('\n'));
 			});
 		break;
