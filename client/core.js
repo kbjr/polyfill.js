@@ -2,7 +2,7 @@ window.Polyfill = (function() {
 	var self = { };
 	
 	// The URL used to load polyfills
-	var POLYFILL_URL = 'http://polyfill.herokuapp.com/polyfill?p=';
+	var POLYFILL_URL = '<%- BASEURL %>polyfill';
 	
 // ----------------------------------------------------------------------------
 //  External Interface
@@ -42,7 +42,7 @@ window.Polyfill = (function() {
 		}
 		needed = unique(needed);
 		if (needed.length) {
-			loadScript(POLYFILL_URL + needed.join(','));
+			loadScript(self.polyfillUrl(needed));
 		}
 	};
 	
@@ -55,6 +55,21 @@ window.Polyfill = (function() {
 	 */
 	self.loaded = function(polyfill) {
 		polyfills[polyfill] = 'loaded';
+	};
+	
+	/**
+	 * Get the URL for the polyfill engine
+	 *
+	 * @access  public
+	 * @param   array     which polyfills to load
+	 * @return  string
+	 */
+	self.polyfillUrl = function(polys) {
+		var url = POLYFILL_URL;
+		if (polys) {
+			url += '?p=' + polys.join(',');
+		}
+		return url;
 	};
 
 // ----------------------------------------------------------------------------

@@ -13,6 +13,9 @@ gzip = require('gzip'),
 uglify = require('uglify-js'),
 bufferjs = require('bufferjs'),
 
+// Load the config
+conf = require('./config'),
+
 // File path constants
 CLIENT_PATH = path.join(__dirname, '../client'),
 POLYFILL_PATH = path.join(CLIENT_PATH, 'polyfills'),
@@ -21,10 +24,14 @@ CORE_FILE = 'core.js',
 MIN_EXT = '.min',
 GZIP_EXT = '.gz',
 
+// The request handle ID
+nextId = 1000,
+
 // Create the http server
 server = http.createServer(function(req, res) {
 	
 	var handle = {
+		id: nextId++,
 		req: req,
 		res: res,
 		url: (function() {
@@ -50,6 +57,9 @@ server = http.createServer(function(req, res) {
 			handleError(handle, err, msg);
 		}
 	};
+	
+	// Log the request
+	sys.puts('[' + handle.id + '] HTTP ' + req.method + ' ' + req.url + ' (for ' + req.client.remoteAddress + ')');
 	
 	switch (handle.url.segments[1]) {
 		case '':
@@ -164,9 +174,8 @@ server = http.createServer(function(req, res) {
 });
 
 // Start listening
-var port = process.env.PORT || 3000;
-server.listen(port, function() {
-	sys.puts('Listening on port ' + port);
+server.listen(conf.port, function() {
+	sys.puts('Listening on port ' + conf.port);
 });
 
 // ----------------------------------------------------------------------------
@@ -174,6 +183,9 @@ server.listen(port, function() {
 
 // Check if the client supports gziping
 function supportsGzip(handle) {
+	if (! conf.gzip) {
+		handle.gzipSupport = false;
+	}
 	if (handle.gzipSupport === null) {
 		(function() {
 			var encodings = handle.req.headers['accept-encoding'] || '';
@@ -243,6 +255,11 @@ function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 					fs.readFileSync(srcFile)
 				);
 				ugly = uglify(orig);
+				// Insert the base URL into the code if needed
+				while (ugly.indexOf('<%- BASEURL %>') > -1) {
+					ugly = ugly.replace('<%- BASEURL %>', conf.baseUrl);
+				}
+				// Write to the cache file
 				fs.writeFileSync(minFile, ugly);
 			} catch (err) {
 				return after([err, 'Error: Could not uglify ' + file]);
@@ -264,25 +281,27 @@ function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 //  Shortcut functions for sending server responses
 
 // Sends an HTTP response
-server.respond = function(res, status, headers, body) {
-	res.writeHead(status, headers);
-	res.write(body);
-	res.end();
+server.respond = function(handle, status, body) {
+	handle.res.writeHead(status, handle.responseHeaders);
+	handle.res.write(body);
+	handle.res.end();
+	// Log the response
+	sys.puts('[' + handle.id + ']  Response - HTTP ' + status);
 };
 
 // Sends a 200 OK
 server.ok = function(handle, body) {
-	server.respond(handle.res, 200, handle.responseHeaders, body);
+	server.respond(handle, 200, body);
 };
 
 // Sends a 404 Not Found
 server.notFound = function(handle, body) {
-	server.respond(handle.res, 404, handle.responseHeaders, body);
+	server.respond(handle, 404, body);
 };
 
 // Sends a 500 Internal Server Error
 server.internalError = function(handle, body) {
-	server.respond(handle.res, 500, handle.responseHeaders, body);
+	server.respond(handle, 500, body);
 };
 
 /* End of file server.js */
