@@ -188,6 +188,13 @@ window.Polyfill = (function() {
 				elem = null;
 				return result;
 			}
+		},
+		
+		// A Fake Polyfill
+		test: {
+			test: function() {
+				return false;
+			}
 		}
 		
 	};
