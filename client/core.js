@@ -177,6 +177,17 @@ window.Polyfill = (function() {
 				return (!! window.localStorage);
 			},
 			prereqs: ['json']
+		},
+		
+		// HTML5 Input Placeholder Attribute
+		placeholder: {
+			test: function() {
+				var elem = document.createElement('input');
+				elem.type = 'text';
+				var result = ('placeholder' in elem);
+				elem = null;
+				return result;
+			}
 		}
 		
 	};
