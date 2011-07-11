@@ -10,7 +10,7 @@ url = require('url'),
 http = require('http'),
 path = require('path'),
 gzip = require('gzip'),
-crypto = require('crpyto'),
+crypto = require('crypto'),
 uglify = require('uglify-js'),
 bufferjs = require('bufferjs'),
 
