@@ -131,6 +131,7 @@ server = http.createServer(function(req, res) {
 			if (! (handle.url.query.p && handle.url.query.p.length)) {
 				return server.notFound(handle, '// Error 404: Not Found\n// No polyfills given');
 			}
+			var id = handle.url.query.id;
 			var polyfills = handle.url.query.p.split(',').sort();
 			var cacheFile = polyfills.join(',') + '.js';
 			var content = '';
@@ -143,10 +144,11 @@ server = http.createServer(function(req, res) {
 					if (err) {
 						return handle.error(err[0], err[1]);
 					}
-					content += String(data) + ';Polyfill.loaded("' + next + '");'
+					content += String(data) + ';Polyfill.loaded("' + next + '");';
 					if (polyfills.length) {
 						getNext();
 					} else {
+						content += ';Polyfill.done(' + id + ');';
 						content = uglify(content);
 						if (supportsGzip(handle)) {
 							gzipJavaScriptFile(content, cacheFile, POLYFILL_CACHE_PATH, function(err, data) {

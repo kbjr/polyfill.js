@@ -4,6 +4,10 @@ window.Polyfill = (function() {
 	// The URL used to load polyfills
 	var POLYFILL_URL = '<%- BASEURL %>polyfill';
 	
+	// Used for keeping track of requests
+	var lastId = 1;
+	var requests = { };
+	
 // ----------------------------------------------------------------------------
 //  External Interface
 	
@@ -11,22 +15,25 @@ window.Polyfill = (function() {
 	 * Test for support of features and load polyfills as needed
 	 *
 	 * @access  public
-	 * @param   string    ...
+	 * @param   array     the polyfills
 	 * @return  void
 	 */
-	self.needs = function() {
-		var args = Array.prototype.slice.call(arguments);
-		if (args[0] === '*') {
-			args = [ ];
+	self.needs = function(polys, after) {
+		after = after || function() { };
+		if (typeof polys === 'string') {
+			polys = [polys];
+		}
+		if (polys[0] === '*') {
+			polys = [ ];
 			for (var i in polyfills) {
 				if (polyfills.hasOwnProperty(i)) {
-					args.push(i);
+					polys.push(i);
 				}
 			}
 		}
 		var needed = [ ];
-		while (args.length) {
-			var polyfill = polyfills[args.shift()];
+		while (polys.length) {
+			var polyfill = polyfills[polys.shift()];
 			if (! polyfill) {
 				throw new Error('No such polyfill "' + test + '"');
 			}
@@ -36,13 +43,17 @@ window.Polyfill = (function() {
 				} else {
 					polyfill.state = 'loading';
 					needed.push(polyfill.name);
-					args.push.apply(args, polyfill.prereqs);
+					polys.push.apply(polys, polyfill.prereqs);
 				}
 			}
 		}
 		needed = unique(needed);
 		if (needed.length) {
-			loadScript(self.polyfillUrl(needed));
+			loadScript(self.polyfillUrl(needed), function() {
+				after();
+			});
+		} else {
+			after();
 		}
 	};
 	
@@ -55,6 +66,19 @@ window.Polyfill = (function() {
 	 */
 	self.loaded = function(polyfill) {
 		polyfills[polyfill] = 'loaded';
+	};
+	
+	/**
+	 * Used internally, tells the system that a polyfill script is done
+	 *
+	 * @access  public
+	 * @param   number    the request id
+	 * @return  void
+	 */
+	self.done = function(id) {
+		if (typeof requests[id] === 'function') {
+			requests[id]();
+		}
 	};
 	
 	/**
@@ -128,11 +152,13 @@ window.Polyfill = (function() {
 	/**
 	 * Loads a JavaScript file by url
 	 */
-	var loadScript = function(source) {
+	var loadScript = function(source, after) {
+		var id = nextId++;
 		var script = document.createElement('script');
 		var head = document.getElementsByTagName('head')[0];
+		requests[id] = after;
 		script.type = 'text/javascript';
-		script.src = source;
+		script.src = source + '&id=' + id;
 		head.appendChild(script);
 	};
 	
