@@ -5,7 +5,7 @@ window.Polyfill = (function() {
 	var POLYFILL_URL = '<%- BASEURL %>polyfill';
 	
 	// Used for keeping track of requests
-	var lastId = 1;
+	var nextId = 1;
 	var requests = { };
 	
 // ----------------------------------------------------------------------------

@@ -13,9 +13,11 @@
 	
 	<script type="text/javascript">
 		
-		Polyfill.needs('placeholder', 'test');
+		Polyfill.needs(['placeholder', 'test'], function() {
 		
-		TestPolyfill();
+			TestPolyfill();
+		
+		});
 		
 	</script>
 	
