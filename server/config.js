@@ -8,7 +8,7 @@ module.exports = {
 	/**
 	 * The application's base URL *with* a trailing slash
 	 */
-	baseUrl: 'http://localhost:5000/',
+	baseUrl: 'http://polyfill.herokuapp.com:5000/',
 	
 	/**
 	 * Allow output to be gzipped
