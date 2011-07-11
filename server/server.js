@@ -261,7 +261,7 @@ function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 				}
 				// Write to the cache file
 				if (! path.existsSync(cacheDir)) {
-					path.mkdirSync(cacheDir, 0777);
+					fs.mkdirSync(cacheDir, 0777);
 				}
 				fs.writeFileSync(minFile, ugly);
 			} catch (err) {
