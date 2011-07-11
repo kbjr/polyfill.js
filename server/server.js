@@ -260,6 +260,9 @@ function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 					ugly = ugly.replace('<%- BASEURL %>', conf.baseUrl);
 				}
 				// Write to the cache file
+				if (! path.existsSync(cacheDir)) {
+					path.mkdirSync(cacheDir, 0777);
+				}
 				fs.writeFileSync(minFile, ugly);
 			} catch (err) {
 				return after([err, 'Error: Could not uglify ' + file]);
