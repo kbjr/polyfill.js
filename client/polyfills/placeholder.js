@@ -52,6 +52,7 @@
 					set: function(value) {
 						input._placeholder.value = value;
 						placeholderFix.redraw(input);
+						return value;
 					},
 					get: function(value) {
 						return input._placeholder.value;
@@ -77,11 +78,8 @@
 				}
 				return proto.getAttribute.call(input, attr);
 			};
-				
 			
-			
-			
-			
+			placeholderFix.redraw(input);
 			
 			// Bind the needed events for show/hide/reposition
 			var
@@ -105,6 +103,29 @@
 		redraw: function(input) {
 			placeholderFix.init(input);
 			
+			// Hide the placeholder node
+			placeholderFix.hide(input);
+			
+			// Update the value if needed
+			var node = input._placeholder.node;
+			node.innerHTML = input.placeholder;
+			
+			// Update any styles as needed
+			setStyle(node, {
+				zIndex: (getStyle(input, 'zIndex') || 99999) + 1,
+				backgroundColor: getStyle(input, 'backgroundColor'),
+				fontStyle: getStyle(input, 'fontStyle'),
+				fontVariant: getStyle(input, 'fontVariant'),
+				fontWeight: getStyle(input, 'fontWeight'),
+				fontSize: getStyle(input, 'fontSize'),
+				fontFamily: getStyle(input, 'fontFamily')
+			});
+			
+			// Do any repositioning needed
+			placeholderFix.reposition(input);
+			
+			// Re-show the placeholder node
+			placeholderFix.show(input);
 		},
 		
 		// Show the placeholder for an element
@@ -123,7 +144,19 @@
 		},
 		
 		reposition: function(input) {
-			
+			var offset = getOffset(input);
+			setStyle(input._placeholder.node, {
+				top: offset.top + 'px',
+				left: offset.left + 'px'
+			});
+		},
+		
+		autoUpdate: function(evt) {
+			evt = evt || window.event;
+			var node = evt.target || evt.srcElement;
+			if (node.nodeName.toLowerCase() === 'input') {
+				placeholderFix.redraw(node):
+			}
 		}
 		
 	};
@@ -132,42 +165,15 @@
 	 * Use mutation events for auto-updating
 	 */
 	if (document.addEventListener) {
-		
-		document.addEventListener('DOMAttrModified', function(evt) {
-			var node = evt.target;
-			if (node.nodeName.toLowerCase() === 'input') {
-				if (evt.attrName === 'placeholder') {
-					placeholderFix.redraw(node):
-				}
-			}
-		});
-		
-		document.addEventListener('DOMNodeInserted', function(evt) {
-			var node = evt.target;
-			if (node.nodeName.toLowerCase() === 'input') {
-				if (! node._placeholder) {
-					placeholderFix.redraw(node);
-				}
-			}
-		});
-		
+		document.addEventListener('DOMAttrModified', placeholderFix.autoUpdate);
+		document.addEventListener('DOMNodeInserted', placeholderFix.autoUpdate);
 	}
-	
 	/**
 	 * Use onpropertychange for auto-updating
 	 */
 	else if (document.attachEvent && 'onpropertychange' in document) {
-		
-		document.attachEvent('onpropertychange', function(evt) {
-			evt = evt || window.event;
-			var node = evt.srcElement;
-			if (node.nodeName.toLowerCase() === 'input') {
-				placeholderFix.redraw(node);
-			}
-		});
-		
+		document.attachEvent('onpropertychange', placeholderFix.autoUpdate);
 	}
-	
 	/**
 	 * No event-based auto-update
 	 */
@@ -253,6 +259,13 @@
 			top: input.offsetTop + parseFloat(getStyle(input, 'paddingTop')),
 			left: input.offsetLeft + parseFloat(getStyle(input, 'paddingLeft'))
 		};
+	}
+
+// ----------------------------------------------------------------------------
+//  Start Running
+	
+	for (var i = 0, c = inputs.length; i < c; i++) {
+		placeholderFix.init(inputs[i]);
 	}
 	
 }());
