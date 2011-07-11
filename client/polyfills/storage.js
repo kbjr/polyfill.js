@@ -9,6 +9,11 @@ if (! window.localStorage) {
 	storage, read, write, del,
 	
 	/**
+	 * If using the cookie model, cookies should last how long?
+	 */
+	cookieStorageExpiration = 1000 * 60 * 60 * 24 * 365;
+	
+	/**
 	 * Check for the globalStorage model
 	 */
 	hasGlobalStorage = (function() {
@@ -66,7 +71,7 @@ if (! window.localStorage) {
 		this.clear = function() {
 			this.length = 0;
 			data = { };
-			write(name, data);
+			del(name);
 		};
 		
 		this.getItem = function(key) {
@@ -134,17 +139,17 @@ if (! window.localStorage) {
 	 */
 	else if (hasUserData) {
 		
-		storage = doc.createElement('div');
+		storage = document.createElement('div');
 
 		var withStore = function(func) {
 			return function() {
-				doc.body.appendChild(storage);
+				document.body.appendChild(storage);
 				storage.addBehavior('#default#userData');
 				storage.load('Storage');
 				var args = Array.prototype.slice.call(arguments, 0);
 				args.unshift(storage);
 				result = func.apply(win, args);
-				doc.body.removeChild(storage);
+				storage.parentNode.removeChild(storage);
 				return result;
 			};
 		};
@@ -170,18 +175,49 @@ if (! window.localStorage) {
 	 */
 	else {
 		
+		var
+		
+		readCookie = function(name) {
+			var
+			nameEQ = name + "=",
+			ca = document.cookie.split(';'),
+
+			for (var i = 0, len = ca.length; i < len; i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') {
+					c = c.substring(1,c.length);
+				}
+
+				if (c.indexOf(nameEQ) == 0) {
+					return c.substring(nameEQ.length,c.length);
+				}
+			}
+			return null;
+		},
+		
+		writeCookie = function(name, value, expires) {
+			if (expires) {
+				var date = new Date();
+				date.setTime(date.getTime() + expires);
+				expires = '; expires=' + date.toGMTString();
+			} else {
+				expires = '';
+			}
+			document.cookie = name + '=' + value + expires + '; path=/';
+		};
+		
 		write = function(key, value) {
 			value = encode(value, true);
+			writeCookie(key, value, cookieStorageExpiration);
 		};
 		
 		read = function(key) {
-			var value = '...';
-			
+			var value = readCookie(key);
 			return decode(value, true);
 		};
 		
 		del = function(key) {
-			
+			writeCookie(key, '', -1);
 		};
 		
 	}
