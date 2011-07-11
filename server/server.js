@@ -10,6 +10,7 @@ url = require('url'),
 http = require('http'),
 path = require('path'),
 gzip = require('gzip'),
+crypto = require('crpyto'),
 uglify = require('uglify-js'),
 bufferjs = require('bufferjs'),
 
@@ -110,6 +111,15 @@ server = http.createServer(function(req, res) {
 				if (err) {
 					return handle.error(err[0], err[1]);
 				}
+				// Get the ETag value
+				var etag = hash('sha1', data).substring(0, 7);
+				// Send a 304 if no changes were made
+				var ifNoneMatch = handle.req.headers['if-none-match'] || null;
+				if (ifNoneMatch === etag) {
+					return server.notModified(handle);
+				}
+				// If there were changes, send a new ETag header
+				handle.responseHeaders['ETag'] = etag;
 				// If it needs gzip, handle that...
 				if (supportsGzip(handle)) {
 					gzipJavaScriptFile(data, CORE_FILE, CLIENT_PATH, function(err, data) {
@@ -149,6 +159,16 @@ server = http.createServer(function(req, res) {
 						getNext();
 					} else {
 						content += ';Polyfill.done(' + id + ');';
+						// Get the ETag value
+						var etag = hash('sha1', content).substring(0, 7);
+						// Send a 304 if no changes were made
+						var ifNoneMatch = handle.req.headers['if-none-match'] || null;
+						if (ifNoneMatch === etag) {
+							return server.notModified(handle);
+						}
+						// If there were changes, send a new ETag header
+						handle.responseHeaders['ETag'] = etag;
+						// Compress the content
 						content = uglify(content);
 						if (supportsGzip(handle)) {
 							gzipJavaScriptFile(content, cacheFile, POLYFILL_CACHE_PATH, function(err, data) {
@@ -282,13 +302,23 @@ function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 	});
 };
 
+// Hash a string
+function hash(alg, str) {
+	var hashsum = crypto.createHash(alg);
+	// Add the string data
+	hashsum.update(str);
+	return hashsum.digest('hex');
+};
+
 // ----------------------------------------------------------------------------
 //  Shortcut functions for sending server responses
 
 // Sends an HTTP response
 server.respond = function(handle, status, body) {
 	handle.res.writeHead(status, handle.responseHeaders);
-	handle.res.write(body);
+	if (status < 300 || status >= 400) {
+		handle.res.write(body);
+	}
 	handle.res.end();
 	// Log the response
 	sys.puts('[' + handle.id + ']  Response - HTTP ' + status);
@@ -297,6 +327,11 @@ server.respond = function(handle, status, body) {
 // Sends a 200 OK
 server.ok = function(handle, body) {
 	server.respond(handle, 200, body);
+};
+
+// Sends a 304 Not Modified
+server.notModified = function(handle) {
+	server.respond(handle, 304);
 };
 
 // Sends a 404 Not Found
