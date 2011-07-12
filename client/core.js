@@ -216,7 +216,14 @@ window.Polyfill = (function() {
 			}
 		},
 		
-		// A Fake Polyfill
+		// document.querySelectorAll/querySelector
+		querySelectorall: {
+			test: function() {
+				return (!! document.querySelectorAll);
+			}
+		},
+		
+		// A Fake Polyfill Used In Testing
 		test: {
 			test: function() {
 				return false;
