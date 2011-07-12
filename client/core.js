@@ -223,6 +223,13 @@ window.Polyfill = (function() {
 			}
 		},
 		
+		// window.onhashchange Event
+		hashchange: {
+			test: function() {
+				return ('onhashchange' in window);
+			}
+		},
+		
 		// A Fake Polyfill Used In Testing
 		test: {
 			test: function() {
