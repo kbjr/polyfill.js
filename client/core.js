@@ -193,7 +193,7 @@ window.Polyfill = (function() {
 		// JSON
 		json: {
 			test: function() {
-				return (window.JSON && window.JSON.stringify('1') === '"1"');
+				return (window.JSON && typeof window.JSON.stringify(1) === 'string');
 			}
 		},
 		
