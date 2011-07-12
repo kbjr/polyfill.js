@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+	<title>polyfill.js</title>
+	
+	<style type="text/css">
+		
+		* {
+			font-family: monospace;
+		}
+		
+		body, html {
+			background: #111;
+		}
+		
+		pre {
+			color: #fff;
+		}
+		
+	</style>
+	
+</head>
+<body>
+	
+	<pre>Server is ready.
+
+-------------------------------------------------------------------------------------------
+
+Available Polyfills:
+
+<% for (var i = 0, c = files.length; i < c; i++) {
+	var file = files[i].split('.');
+	file.pop();
+%>  <%- file %>
+<% } %>
+-------------------------------------------------------------------------------------------,
+
+To use polyfill.js, load http://polyfill.herokuapp.com/core in your website, eg.
+
+  &lt;script type="text/javascript" src="http://polyfill.herokuapp.com/core">&lt;/script>
+
+Then, in your JavaScript, tell the system which features you need, like so:
+
+  Polyfill.needs("json", "placeholder", "storage");
+
+You can call Polyfill.needs multiple times, but each call will create a new HTTP request,
+so combining them into a single call is most efficient.
+
+Alternately, you can also load ALL appropriate polyfills for the current browser by calling
+Polyfill.needs("*"), but this is not suggested as it may load code you do not need.
+
+Enjoy using polyfill.js :)
+ - James Brumond</pre>
+	
+</body>
+</html>

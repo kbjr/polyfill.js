@@ -7,6 +7,7 @@ var
 fs = require('fs'),
 sys = require('sys'),
 url = require('url'),
+ejs = require('ejs'),
 http = require('http'),
 path = require('path'),
 gzip = require('gzip'),
@@ -64,44 +65,23 @@ server = http.createServer(function(req, res) {
 	
 	switch (handle.url.segments[1]) {
 		case '':
-			var body = [
-				'Server is ready.',
-				'',
-				'-------------------------------------------------------------------------------------------',
-				'',
-				'Available Polyfills:'
-			];
 			fs.readdir(POLYFILL_PATH, function(err, files) {
-				if (! err) {
-					for (var i = 0, c = files.length; i < c; i++) {
-						var file = files[i].split('.');
-						file.pop();
-						body.push(' + ' + file);
-					}
+				if (err) {
+					return handle.error(err);
 				}
-				body.push(
-					'',
-					'-------------------------------------------------------------------------------------------',
-					'',
-					'To use polyfill.js, load http://polyfill.herokuapp.com/core in your website, eg.',
-					'',
-					'  <script type="text/javascript" src="http://polyfill.herokuapp.com/core"></script>',
-					'',
-					'Then, in your JavaScript, tell the system which features you need, like so:',
-					'',
-					'  Polyfill.needs("json", "placeholder", "storage");',
-					'',
-					'You can call Polyfill.needs multiple times, but each call will create a new HTTP request,',
-					'so combining them into a single call is most efficient.',
-					'',
-					'Alternately, you can also load ALL appropriate polyfills for the current browser by calling',
-					'Polyfill.needs("*"), but this is not suggested as it may load code you do not need.',
-					'',
-					'Enjoy using polyfill.js :)',
-					' - James Brumond',
-					''
-				);
-				server.ok(handle, body.join('\n'));
+				var welcome = path.join(__dirname, 'welcome.ejs');
+				fs.readFile(welcome, function(err, data) {
+					if (err) {
+						return handle.error(err);
+					}
+					var body = ejs.render(String(data), {
+						locals: {
+							files: files
+						}
+					});
+					handle.responseHeaders['Content-Type'] = 'text/html';
+					server.ok(handle, body);
+				});
 			});
 		break;
 		
