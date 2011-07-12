@@ -42,7 +42,9 @@ To use polyfill.js, load http://polyfill.herokuapp.com/core in your website, eg.
 
 Then, in your JavaScript, tell the system which features you need, like so:
 
-  Polyfill.needs("json", "placeholder", "storage");
+  Polyfill.needs(["json", "placeholder", "storage"], function() {
+    ...
+  });
 
 You can call Polyfill.needs multiple times, but each call will create a new HTTP request,
 so combining them into a single call is most efficient.
