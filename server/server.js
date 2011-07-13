@@ -87,7 +87,13 @@ server = http.createServer(function(req, res) {
 		
 		// Handle loading the core
 		case 'core':
-			loadJavaScriptFile(CORE_FILE, CLIENT_PATH, CLIENT_PATH, function(err, data) {
+			var parseVars = {
+				baseurl: conf.baseurl,
+				polyfills: fs.readFileSync(
+					path.join(CLIENT_PATH, 'polyfills.js')
+				)
+			};
+			loadJavaScriptFile(CORE_FILE, CLIENT_PATH, CLIENT_PATH, parseVars, function(err, data) {
 				if (err) {
 					return handle.error(err[0], err[1]);
 				}
@@ -243,10 +249,15 @@ function gzipJavaScriptFile(ugly, file, cacheDir, after) {
 }
 
 // Load a JavaScript file
-function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
+function loadJavaScriptFile(file, sourceDir, cacheDir, parseVars, after) {
 	// File paths
 	var srcFile = path.join(sourceDir, file);
 	var minFile = path.join(cacheDir, file) + MIN_EXT;
+	// Check for variables given
+	if (after === void(0)) {
+		after = parseVars;
+		parseVars = null;
+	}
 	// Check if the minified file already exists
 	path.exists(minFile, function(exists) {
 		var ugly;
@@ -256,11 +267,13 @@ function loadJavaScriptFile(file, sourceDir, cacheDir, after) {
 				var orig = String(
 					fs.readFileSync(srcFile)
 				);
-				ugly = uglify(orig);
-				// Insert the base URL into the code if needed
-				while (ugly.indexOf('<%- BASEURL %>') > -1) {
-					ugly = ugly.replace('<%- BASEURL %>', conf.baseUrl);
+				// Parse the data if needed
+				if (parseVars) {
+					orig = ejs.render(orig, {
+						locals: parseVars
+					});
 				}
+				ugly = uglify(orig);
 				// Write to the cache file
 				if (! path.existsSync(cacheDir)) {
 					fs.mkdirSync(cacheDir, 0777);
