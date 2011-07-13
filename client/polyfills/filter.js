@@ -1,3 +1,7 @@
+/**
+ * Array.prototype.filter Polyfill
+ */
+
 Array.prototype.filter = function(fun, thisp) {
 	"use strict";
 	if (this === void 0 || this === null) {
@@ -19,3 +23,5 @@ Array.prototype.filter = function(fun, thisp) {
 	}
 	return res;
 };
+
+/* End of file filter.js */

@@ -3,6 +3,26 @@
  */
 
 (function() {
+
+	window.HashChangeEvent = (function() {
+		var ret = function(oldURL, newURL) {
+			this.oldURL = oldURL;
+			this.newURL = newURL;
+			this.timeStamp = (new Date()).getTime();
+		};
+		ret.prototype = {
+			bubbles: false,
+			cancelable: false,
+			currentTarget: null,
+			defaultPrevented: false,
+			returnValue: true,
+			srcElement: null,
+			target: null,
+			timeStamp: null,
+			type: 'hashchange'
+		};
+		return ret;
+	}());
 	
 	var fix = {
 		
@@ -69,50 +89,8 @@
 		},
 		
 		// Creates a new hashchange event object
-		createEventObject: (function() {
-			var extend = function(evt, values) {
-				for (var i in values) {
-					if (values.hasOwnProperty(i)) {
-						evt[i] = values[i];
-					}
-				}
-			};
-			// document.createEvent model
-			if (document.createEvent) {
-				return function(values) {
-					var evt = document.createEvent('HTMLEvents');
-					evt.initEvent('hashchange', false, false);
-					extend(evt, values);
-					return evt;
-				};
-			}
-			// document.createEventObject model
-			else if (document.createEventObject) {
-				return function(values) {
-					var evt = document.createEventObject();
-					evt.type = 'hashchange';
-					extend(evt, values);
-					return evt;
-				};
-			}
-			// Build the object manually
-			else {
-				return function(values) {
-					var evt = {
-						bubbles: false,
-						cancelable: false,
-						currentTarget: null,
-						defaultPrevented: false,
-						returnValue: true,
-						srcElement: null,
-						target: null,
-						timeStamp: (new Date()).getTime(),
-						type: 'hashchange'
-					};
-					extend(evt, values);
-					return evt;
-				};
-			}
+		createEventObject: function(oldURL, newURL) {
+			return new window.HashChangeEvent(oldURL, newURL);
 		},
 		
 		// Runs on an interval testing the hash

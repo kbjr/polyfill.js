@@ -1,3 +1,7 @@
+/**
+ * Array.prototype.forEach Polyfill
+ */
+
 Array.prototype.forEach = function(fun, thisp) {
 	"use strict";
 	if (this === void 0 || this === null) {
@@ -14,3 +18,5 @@ Array.prototype.forEach = function(fun, thisp) {
 		}
 	}
 };
+
+/* End of file foreach.js */

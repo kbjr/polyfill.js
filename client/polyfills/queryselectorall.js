@@ -1432,3 +1432,5 @@ var posProcess = function( selector, context ) {
 	} catch (e) { }
 
 })();
+
+/* End of file queryselectorall.js */

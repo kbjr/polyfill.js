@@ -1,3 +1,7 @@
+/**
+ * Array.prototype.indexOf Polyfill
+ */
+
 Array.prototype.indexOf = function(searchElement) {
 	"use strict";
 	if (this === void 0 || this === null) {
@@ -25,3 +29,5 @@ Array.prototype.indexOf = function(searchElement) {
 	}
 	return -1;
 };
+
+/* End of file indexof.js */
