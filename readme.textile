@@ -10,7 +10,7 @@ h4. A JavaScript Polyfill Framework
 
 polyfill.js is a *very lightweight* JavaScript framework for replacing missing features in outdated browsers. The core for polyfill.js is extremely small and you only have to load the polyfills you need. For example, if you want to use localStorage, EventSource, and Array.prototype.forEach in your application, you tell polyfill.js that you need them, it checks if you already have them, and then loads only what you need. You would do this by using the @Polyfill.needs()@ method, like this:
 
-<pre></code>Polyfill.needs(['localstorage', 'eventsource', 'foreach'], function() {
+<pre><code>Polyfill.needs(['localstorage', 'eventsource', 'foreach'], function() {
     
     // Do something with those functionalities
     	
