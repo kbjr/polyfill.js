@@ -5,6 +5,11 @@
 (function() {
 	
 	/**
+	 * Some unique bugs in IE6- have to be handled seperately... ugh.
+	 */
+	var oldIE = false;
+	
+	/**
 	 * The color to display placeholders in
 	 */
 	var placeholderColor = '#aaa';
@@ -32,7 +37,7 @@
 				node: createElement('div', {
 					style: {
 						position: 'absolute',
-						display: 'inline-block',
+						display: 'block',
 						color: placeholderColor,
 						margin: '0',
 						padding: '0',
@@ -43,15 +48,18 @@
 					return (input.type === 'text' || input.type === 'password');
 				},
 				value: input.getAttribute('placeholder'),
-				visible: false
+				visible: false,
+				set: function(value) {
+					input._placeholder.value = value;
+					placeholderFix.redraw(input);
+				}
 			};
 			
 			// Use a setter to auto-update when the property is changed
 			if (defineProperty) {
 				defineProperty(input, 'placeholder', {
 					set: function(value) {
-						input._placeholder.value = value;
-						placeholderFix.redraw(input);
+						input._placeholder.set(value);
 						return value;
 					},
 					get: function(value) {
@@ -61,24 +69,35 @@
 			}
 			
 			// Replace getAttribute/setAttribute to add placeholder support
-			var proto = input.constructor.prototype;
-			input.setAttribute = function(attr, value) {
-				if (attr === 'placeholder') {
-					input.placeholder = value;
-					if (! defineProperty) {
-						input._placeholder.value = value;
-						placeholderFix.redraw(input);
-					}
+			if (! oldIE) {
+				try {
+					var proto = input.constructor.prototype;
+					input.setAttribute = function(attr, value) {
+						if (attr === 'placeholder') {
+							input.placeholder = value;
+							if (! defineProperty) {
+								input._placeholder.set(value);
+							}
+						}
+						return proto.setAttribute.call(input, attr, value);
+					};
+					input.getAttribute = function(attr) {
+						if (attr === 'placeholder') {
+							return input._placeholder.value;
+						}
+						return proto.getAttribute.call(input, attr);
+					};
+				} catch (e) {
+					// IE6 Bug: Can't access input.constructor.prototype.getAttribute/setAttribute
+					// in the needed way to extend the native methods. Basically, when combined with
+					// no support for getters/setters, this means that dynamic placholders can't be
+					// done in this browser. This can be worked around by using the internal method
+					// input._placeholder.set(...) if the developer has to support IE6.
+					oldIE = true;
 				}
-				return proto.setAttribute.call(input, attr, value);
-			};
-			input.getAttribute = function(attr) {
-				if (attr === 'placeholder') {
-					return input._placeholder.value;
-				}
-				return proto.getAttribute.call(input, attr);
-			};
+			}
 			
+			// Draw the placholder
 			placeholderFix.redraw(input);
 			
 			// Bind the needed events for show/hide/reposition
@@ -149,6 +168,10 @@
 		// Reposition the placeholder for an element
 		reposition: function(input) {
 			var offset = getOffset(input);
+			// Fix a positioning bug in older IE versions
+			if (oldIE && input.offsetParent && getStyle(input.offsetParent, 'position') === 'static') {
+				input.offsetParent.style.position = 'relative';
+			}
 			setStyle(input._placeholder.node, {
 				top: offset.top + 'px',
 				left: offset.left + 'px'
