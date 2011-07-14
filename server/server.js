@@ -88,7 +88,7 @@ server = http.createServer(function(req, res) {
 		// Handle loading the core
 		case 'core':
 			var parseVars = {
-				baseurl: conf.baseurl,
+				baseurl: conf.baseUrl,
 				polyfills: fs.readFileSync(
 					path.join(CLIENT_PATH, 'polyfills.js')
 				)
