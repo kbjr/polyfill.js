@@ -42,7 +42,7 @@
 				enabled: function() {
 					return (input.type === 'text' || input.type === 'password');
 				},
-				value: null,
+				value: input.getAttribute('placeholder'),
 				visible: false
 			};
 			
@@ -108,11 +108,13 @@
 			
 			// Update the value if needed
 			var node = input._placeholder.node;
-			node.innerHTML = input.placeholder;
+			node.innerHTML = input.placeholder || '';
 			
 			// Update any styles as needed
+			var zIndex = getStyle(input, 'zIndex');
+			zIndex = (zIndex === 'auto') ? 99999 : zIndex;
 			setStyle(node, {
-				zIndex: (getStyle(input, 'zIndex') || 99999) + 1,
+				zIndex: (zIndex || 99999) + 1,
 				backgroundColor: getStyle(input, 'backgroundColor'),
 				fontStyle: getStyle(input, 'fontStyle'),
 				fontVariant: getStyle(input, 'fontVariant'),
@@ -136,6 +138,7 @@
 			}
 		},
 		
+		// Hide the placeholder for an element
 		hide: function(input) {
 			if (input._placeholder.visible && input._placeholder.enabled()) {
 				input.parentNode.removeChild(input._placeholder.node);
@@ -143,6 +146,7 @@
 			}
 		},
 		
+		// Reposition the placeholder for an element
 		reposition: function(input) {
 			var offset = getOffset(input);
 			setStyle(input._placeholder.node, {
@@ -151,11 +155,13 @@
 			});
 		},
 		
+		// The event function used for auto-updating
 		autoUpdate: function(evt) {
 			evt = evt || window.event;
 			var node = evt.target || evt.srcElement;
-			if (node.nodeName.toLowerCase() === 'input') {
-				placeholderFix.redraw(node):
+			var nodeName = node && (node.nodeName || node.tagName).toLowerCase();
+			if (nodeName === 'input') {
+				placeholderFix.redraw(node);
 			}
 		}
 		
@@ -233,8 +239,10 @@
 	
 	// Set style properties to an element
 	function setStyle(elem, props) {
-		for (var i = 0, c = props.length; i < c; i++) {
-			elem.style[i] = props[i];
+		for (var i in props) {
+			if (props.hasOwnProperty(i)) {
+				elem.style[i] = props[i];
+			}
 		}
 	};
 	
@@ -259,13 +267,21 @@
 			top: input.offsetTop + parseFloat(getStyle(input, 'paddingTop')),
 			left: input.offsetLeft + parseFloat(getStyle(input, 'paddingLeft'))
 		};
-	}
+	};
 
 // ----------------------------------------------------------------------------
 //  Start Running
 	
-	for (var i = 0, c = inputs.length; i < c; i++) {
-		placeholderFix.init(inputs[i]);
+	function start() {
+		for (var i = 0, c = inputs.length; i < c; i++) {
+			placeholderFix.init(inputs[i]);
+		}
+	}
+	
+	if (document.readyState === 'complete') {
+		start();
+	} else {
+		addEventSimple(window, 'load', start);
 	}
 	
 }());
