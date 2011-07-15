@@ -8,7 +8,11 @@ Dual licensed under MIT and GPL
 
 h3. A JavaScript Polyfill Framework
 
-polyfill.js is a *very lightweight* JavaScript framework for replacing missing features in outdated browsers. The core for polyfill.js is extremely small and you only have to load the polyfills you need. For example, if you want to use localStorage, EventSource, and Array.prototype.forEach in your application, you tell polyfill.js that you need them, it checks if you already have them, and then loads only what you need. You would do this by using the @Polyfill.needs()@ method, like this:
+polyfill.js is a *very lightweight* JavaScript framework for replacing missing features in outdated browsers. It can be loaded simply by adding the following script tag to your document:
+
+<pre><code><script type="text/javascript" src="http://polyfill.herokuapp.com/core"></script></code></pre>
+
+The core for polyfill.js is extremely small and you only have to load the polyfills you need. For example, if you want to use localStorage, EventSource, and Array.prototype.forEach in your application, you tell polyfill.js that you need them, it checks if you already have them, and then loads only what you need. You would do this by using the @Polyfill.needs()@ method, like this:
 
 <pre><code>Polyfill.needs(['localstorage', 'eventsource', 'foreach'], function() {
     
