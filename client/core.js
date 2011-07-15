@@ -39,9 +39,10 @@ window.Polyfill = (function() {
 		}
 		var needed = [ ];
 		while (polys.length) {
-			var polyfill = polyfills[polys.shift().toLowerCase()];
+			var name = polys.shift().toLowerCase();
+			var polyfill = polyfills[name];
 			if (! polyfill) {
-				throw new Error('No such polyfill "' + test + '"');
+				throw new Error('No such polyfill "' + name + '"');
 			}
 			if (polyfill.state === 'untested') {
 				if (polyfill.test()) {
