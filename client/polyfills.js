@@ -27,7 +27,7 @@
 	},
 	
 	// document.querySelectorAll/querySelector
-	querySelectorall: {
+	queryselectorall: {
 		test: function() {
 			return (!! document.querySelectorAll);
 		}
