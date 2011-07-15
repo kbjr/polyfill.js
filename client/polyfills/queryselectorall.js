@@ -1427,8 +1427,9 @@ var posProcess = function( selector, context ) {
 
 	// Extend the element prototype (doesn't work in IE)
 	try {
-		Element.prototype.querySelectorAll = querySelectorAll;
-		Element.prototype.querySelector = querySelector;
+		var Elem = Element || HTMLElement;
+		Elem.prototype.querySelectorAll = querySelectorAll;
+		Elem.prototype.querySelector = querySelector;
 	} catch (e) { }
 
 })();
