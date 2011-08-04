@@ -15,7 +15,7 @@
 			lastEventId = null,
 			cache = '';
 
-		if (! url || typeof url != 'string') {
+		if (! url || typeof url !== 'string') {
 			throw new SyntaxError('Not enough arguments');
 		}
 
@@ -32,7 +32,7 @@
 	
 		function poll() {
 			try { // force hiding of the error message... insane?
-				if (eventsource.readyState == eventsource.CLOSED) return;
+				if (eventsource.readyState === eventsource.CLOSED) {return;}
 			
 				var xhr = new XMLHttpRequest();
 				xhr.open('GET', eventsource.URL, true);
@@ -43,14 +43,14 @@
 				// readychange until the server connection is closed
 				xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-				if (lastEventId != null) {
+				if (lastEventId !== null) {
 					xhr.setRequestHeader('Last-Event-ID', lastEventId);
 				}
 				cache = '';
 		
 				xhr.timeout = 50000;
 				xhr.onreadystatechange = function () {
-					if ((this.readyState == 3 || this.readyState == 4) && this.status == 200) {
+					if ((this.readyState === 3 || this.readyState === 4) && this.status === 200) {
 						// on success
 						if (eventsource.readyState === eventsource.CONNECTING) {
 							eventsource.readyState = eventsource.OPEN;

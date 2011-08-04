@@ -299,7 +299,7 @@
 		for (var i = 0, c = inputs.length; i < c; i++) {
 			placeholderFix.init(inputs[i]);
 		}
-	}
+	};
 	
 	if (document.readyState === 'complete') {
 		start();
