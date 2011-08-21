@@ -38,6 +38,7 @@ h3. Available Polyfills
 * queryselectorall
 * storage (localStorage)
 * xhr
+* trim (String.prototype.trim)
 
 h3. Contributing A New Polyfill
 

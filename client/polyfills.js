@@ -1,5 +1,8 @@
 {
-		
+	
+// ----------------------------------------------------------------------------
+//  JSON/Storage
+	
 	// JSON
 	json: {
 		test: function() {
@@ -14,6 +17,9 @@
 		},
 		prereqs: ['json']
 	},
+
+// ----------------------------------------------------------------------------
+//  Elements/Attributes
 	
 	// HTML5 Input Placeholder Attribute
 	placeholder: {
@@ -25,6 +31,9 @@
 			return result;
 		}
 	},
+
+// ----------------------------------------------------------------------------
+//  DOM Methods
 	
 	// document.querySelectorAll/querySelector
 	queryselectorall: {
@@ -32,6 +41,9 @@
 			return (!! document.querySelectorAll);
 		}
 	},
+
+// ----------------------------------------------------------------------------
+//  Events
 	
 	// window.onhashchange Event
 	hashchange: {
@@ -39,6 +51,9 @@
 			return ('onhashchange' in window);
 		}
 	},
+	
+// ----------------------------------------------------------------------------
+//  Constructors
 	
 	// EventSource
 	eventsource: {
@@ -54,6 +69,9 @@
 			return (!! window.XMLHttpRequest);
 		}
 	},
+
+// ----------------------------------------------------------------------------
+//  Prototype Methods
 	
 	// Array.prototype.forEach
 	foreach: {
@@ -75,6 +93,16 @@
 			return (!! Array.prototype.filter);
 		}
 	},
+	
+	// String.prototype.trim
+	trim: {
+		test: function() {
+			return (!! String.prototype.trim);
+		}
+	},
+	
+// ----------------------------------------------------------------------------
+//  Testing
 	
 	// A Fake Polyfill Used In Testing
 	test: {
