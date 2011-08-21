@@ -116,14 +116,6 @@
 		prereqs: ['dateparse']
 	},
 	
-	// Date.prototype.toJSON
-	datetojson: {
-		test: function() {
-			return (!! Date.prototype.toJSON);
-		},
-		prereqs: ['toisostring']
-	},
-	
 // ----------------------------------------------------------------------------
 //  Other Utilities
 	

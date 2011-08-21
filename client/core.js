@@ -54,7 +54,6 @@ window.Polyfill = (function() {
 						}
 					}
 					needed.push(polyfill.name);
-					polys.push.apply(polys, polyfill.prereqs);
 				}
 			}
 		};

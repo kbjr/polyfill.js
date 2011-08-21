@@ -29,7 +29,7 @@ That loaded script is a compacted (using "uglify-js":https://github.com/mishoo/U
 h3. Available Polyfills
 
 * hashchange (window.onhashchange)
-* json (window.JSON)
+* json (window.JSON/*.prototype.toJSON)
 * storage (window.localStorage)
 * placeholder (<input placeholder="">)
 * queryselectorall (document.querySelector[All])
@@ -42,7 +42,6 @@ h3. Available Polyfills
 * bind (Function.prototype.bind)
 * dateparse (Date.parse)
 * toisostring (Date.prototype.toISOString)
-* datetojson (Date.prototype.toJSON)
 * keys (Object.keys)
 * isarray (Array.isArray)
 * now (Date.now)
