@@ -28,18 +28,19 @@ That loaded script is a compacted (using "uglify-js":https://github.com/mishoo/U
 
 h3. Available Polyfills
 
-* eventsource
-* filter (Array.prototype.filter)
-* foreach (Array.prototype.foreach)
 * hashchange
-* indexof (Array.prototype.indexOf)
 * json
+* storage (localStorage)
 * placeholder
 * queryselectorall
-* storage (localStorage)
 * xhr
+* eventsource
 * trim (String.prototype.trim)
+* filter (Array.prototype.filter)
+* foreach (Array.prototype.foreach)
+* indexof (Array.prototype.indexOf)
 * keys (Object.keys)
+* isarray (Array.isArray)
 
 h3. Contributing A New Polyfill
 
