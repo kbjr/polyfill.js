@@ -1,5 +1,5 @@
 /**
- * Function.bind Polyfill
+ * Function.prototype.bind Polyfill
  */
 
 Function.prototype.bind = (function() {

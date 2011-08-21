@@ -39,9 +39,10 @@ h3. Available Polyfills
 * filter (Array.prototype.filter)
 * foreach (Array.prototype.foreach)
 * indexof (Array.prototype.indexOf)
+* bind (Function.prototype.bind)
 * keys (Object.keys)
 * isarray (Array.isArray)
-* bind (Function.bind)
+* now (Date.now)
 
 h3. Contributing A New Polyfill
 

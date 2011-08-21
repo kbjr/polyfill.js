@@ -101,6 +101,12 @@
 		}
 	},
 	
+	bind: {
+		test: function() {
+			return (!! Function.prototype.bind);
+		}
+	},
+	
 // ----------------------------------------------------------------------------
 //  Other Utilities
 	
@@ -116,9 +122,9 @@
 		}
 	},
 	
-	bind: {
+	now: {
 		test: function() {
-			return (!! Function.bind);
+			return (!! Date.now);
 		}
 	},
 	
