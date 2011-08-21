@@ -39,6 +39,7 @@ h3. Available Polyfills
 * storage (localStorage)
 * xhr
 * trim (String.prototype.trim)
+* keys (Object.keys)
 
 h3. Contributing A New Polyfill
 
