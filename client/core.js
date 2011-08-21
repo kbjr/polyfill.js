@@ -38,8 +38,7 @@ window.Polyfill = (function() {
 			}
 		}
 		var needed = [ ];
-		while (polys.length) {
-			var name = polys.shift().toLowerCase();
+		function handlePolyfill(name) {
 			var polyfill = polyfills[name];
 			if (! polyfill) {
 				throw new Error('No such polyfill "' + name + '"');
@@ -49,10 +48,18 @@ window.Polyfill = (function() {
 					polyfill.state = 'unneeded';
 				} else {
 					polyfill.state = 'loading';
+					if (polyfill.prereqs) {
+						for (var i = 0, c = polyfill.prereqs.length; i < c; i++) {
+							handlePolyfill(polyfill.prereqs[i]);
+						}
+					}
 					needed.push(polyfill.name);
 					polys.push.apply(polys, polyfill.prereqs);
 				}
 			}
+		};
+		for (var i = 0, c = polys.length; i < c; i++) {
+			handlePolyfill(polys[i].toLowerCase());
 		}
 		needed = unique(needed);
 		if (needed.length) {

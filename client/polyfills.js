@@ -101,30 +101,57 @@
 		}
 	},
 	
+	// Function.prototype.bind
 	bind: {
 		test: function() {
 			return (!! Function.prototype.bind);
 		}
 	},
 	
+	// Date.prototype.toISOString
+	toisostring: {
+		test: function() {
+			return (!! Date.prototype.toISOString);
+		},
+		prereqs: ['dateparse']
+	},
+	
+	// Date.prototype.toJSON
+	datetojson: {
+		test: function() {
+			return (!! Date.prototype.toJSON);
+		},
+		prereqs: ['toisostring']
+	},
+	
 // ----------------------------------------------------------------------------
 //  Other Utilities
 	
+	// Object.keys
 	keys: {
 		test: function() {
 			return (!! Object.keys);
 		}
 	},
 	
+	// Array.isArray
 	isarray: {
 		test: function() {
 			return (!! Array.isArray);
 		}
 	},
 	
+	// Date.now
 	now: {
 		test: function() {
 			return (!! Date.now);
+		}
+	},
+	
+	// Date.parse
+	dateparse: {
+		test: function() {
+			return (! isNaN(Date.parse("2011-06-15T21:40:05+06:00")));
 		}
 	},
 	
