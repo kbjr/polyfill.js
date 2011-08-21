@@ -28,19 +28,20 @@ That loaded script is a compacted (using "uglify-js":https://github.com/mishoo/U
 
 h3. Available Polyfills
 
-* hashchange
-* json
-* storage (localStorage)
-* placeholder
-* queryselectorall
-* xhr
-* eventsource
+* hashchange (window.onhashchange)
+* json (window.JSON)
+* storage (window.localStorage)
+* placeholder (<input placeholder="">)
+* queryselectorall (document.querySelector[All])
+* xhr (window.XMLHttpRequest)
+* eventsource (window.EventSource)
 * trim (String.prototype.trim)
 * filter (Array.prototype.filter)
 * foreach (Array.prototype.foreach)
 * indexof (Array.prototype.indexOf)
 * keys (Object.keys)
 * isarray (Array.isArray)
+* bind (Function.bind)
 
 h3. Contributing A New Polyfill
 
