@@ -40,11 +40,11 @@ h3. Available Polyfills
 * foreach (Array.prototype.foreach)
 * indexof (Array.prototype.indexOf)
 * bind (Function.prototype.bind)
-* dateparse (Date.parse)
 * toisostring (Date.prototype.toISOString)
 * keys (Object.keys)
 * isarray (Array.isArray)
 * now (Date.now)
+* dateparse (Date.parse)
 
 h3. Contributing A New Polyfill
 
@@ -55,4 +55,5 @@ h3. Special Thanks To
 * "Remy Sharp":http://remysharp.com/ - EventSource polyfill based on https://github.com/remy/polyfills/blob/master/EventSource.js
 * "Douglas Crockford":http://www.crockford.com/ - JSON Polyfill from his work
 * "John Resig":http://ejohn.org/ - querySelectorAll polyfill built on top of "Sizzle":http://sizzlejs.com/
+* "Kris Kowal":https://github.com/kriskowal - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
 
