@@ -101,6 +101,13 @@
 		}
 	},
 	
+	// Array.prototype.every
+	every: {
+		test: function() {
+			return (!! Array.prototype.every);
+		}
+	},
+	
 	// String.prototype.trim
 	trim: {
 		test: function() {
