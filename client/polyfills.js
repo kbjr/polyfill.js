@@ -94,6 +94,13 @@
 		}
 	},
 	
+	// Array.prototype.map
+	map: {
+		test: function() {
+			return (!! Array.prototype.map);
+		}
+	},
+	
 	// String.prototype.trim
 	trim: {
 		test: function() {
