@@ -115,6 +115,13 @@
 		}
 	},
 	
+	// Array.prototype.reduce
+	reduce: {
+		test: function() {
+			return (!! Array.prototype.reduce);
+		}
+	},
+	
 	// String.prototype.trim
 	trim: {
 		test: function() {

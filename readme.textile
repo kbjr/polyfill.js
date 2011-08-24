@@ -42,6 +42,7 @@ h3. Available Polyfills
 * map (Array.prototype.map)
 * every (Array.prototype.every)
 * some (Array.prototype.some)
+* reduce (Array.prototype.reduce)
 * bind (Function.prototype.bind)
 * toisostring (Date.prototype.toISOString)
 * keys (Object.keys)
