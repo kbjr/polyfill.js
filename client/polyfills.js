@@ -122,6 +122,20 @@
 		}
 	},
 	
+	// Array.prototype.reduceRight
+	reduceRight: {
+		test: function() {
+			return (!! Array.prototype.reduceRight);
+		}
+	},
+	
+	// Array.prototype.lastIndexOf
+	lastIndexOf: {
+		test: function() {
+			return (!! Array.prototype.lastIndexOf);
+		}
+	},
+	
 	// String.prototype.trim
 	trim: {
 		test: function() {

@@ -43,6 +43,8 @@ h3. Available Polyfills
 * every (Array.prototype.every)
 * some (Array.prototype.some)
 * reduce (Array.prototype.reduce)
+* reduceright (Array.prototype.reduceRight)
+* lastindexof (Array.prototype.lastIndexOf)
 * bind (Function.prototype.bind)
 * toisostring (Date.prototype.toISOString)
 * keys (Object.keys)
