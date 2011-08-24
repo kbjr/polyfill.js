@@ -108,6 +108,13 @@
 		}
 	},
 	
+	// Array.prototype.some
+	some: {
+		test: function() {
+			return (!! Array.prototype.some);
+		}
+	},
+	
 	// String.prototype.trim
 	trim: {
 		test: function() {

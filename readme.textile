@@ -41,6 +41,7 @@ h3. Available Polyfills
 * indexof (Array.prototype.indexOf)
 * map (Array.prototype.map)
 * every (Array.prototype.every)
+* some (Array.prototype.some)
 * bind (Function.prototype.bind)
 * toisostring (Date.prototype.toISOString)
 * keys (Object.keys)
