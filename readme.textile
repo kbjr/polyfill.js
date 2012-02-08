@@ -51,6 +51,7 @@ h3. Available Polyfills
 * isarray (Array.isArray)
 * now (Date.now)
 * dateparse (Date.parse)
+* requestanimationframe (window.requestAnimationFrame)
 
 h3. Contributing A New Polyfill
 
@@ -62,4 +63,5 @@ h3. Special Thanks To
 * "Douglas Crockford":http://www.crockford.com/ - JSON Polyfill from his work
 * "John Resig":http://ejohn.org/ - querySelectorAll polyfill built on top of "Sizzle":http://sizzlejs.com/
 * "Kris Kowal":https://github.com/kriskowal - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
+* "Paul Irish":http://paulirish.com/ - requestAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 

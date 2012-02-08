@@ -41,6 +41,13 @@
 			return (!! document.querySelectorAll);
 		}
 	},
+	
+	// window.requestanimationframe
+	requestanimationframe: {
+		test: function() {
+			return (!! window.requestAnimationFrame);
+		}
+	},
 
 // ----------------------------------------------------------------------------
 //  Events
