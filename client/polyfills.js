@@ -130,14 +130,14 @@
 	},
 	
 	// Array.prototype.reduceRight
-	reduceRight: {
+	reduceright: {
 		test: function() {
 			return (!! Array.prototype.reduceRight);
 		}
 	},
 	
 	// Array.prototype.lastIndexOf
-	lastIndexOf: {
+	lastindexof: {
 		test: function() {
 			return (!! Array.prototype.lastIndexOf);
 		}
