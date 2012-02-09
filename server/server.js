@@ -144,7 +144,7 @@ server = http.createServer(function(req, res) {
 					if (polyfills.length) {
 						getNext();
 					} else {
-						content += ';Polyfill.done(' + next + ');';
+						content += ';Polyfill.done("' + next + '");';
 						// Get the ETag value
 						var etag = hash('sha1', content).substring(0, 7);
 						// Send a 304 if no changes were made
