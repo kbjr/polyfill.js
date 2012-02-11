@@ -48,6 +48,12 @@
 			return (!! window.requestAnimationFrame);
 		}
 	},
+	
+	classlist: {
+		test: function() {
+			return (! 'classList' in document.createElement('a'));
+		}
+	},
 
 // ----------------------------------------------------------------------------
 //  Events
@@ -193,6 +199,13 @@
 	dateparse: {
 		test: function() {
 			return (! isNaN(Date.parse("2011-06-15T21:40:05+06:00")));
+		}
+	},
+	
+	// Object.getPrototypeOf
+	getprototypeof: {
+		test: function() {
+			return (!! Object.getPrototypeOf);
 		}
 	},
 	

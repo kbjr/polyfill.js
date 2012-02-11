@@ -52,6 +52,7 @@ h3. Available Polyfills
 * now (Date.now)
 * dateparse (Date.parse)
 * requestanimationframe (window.requestAnimationFrame)
+* classlist (element.classList)
 
 h3. Contributing A New Polyfill
 
@@ -64,4 +65,5 @@ h3. Special Thanks To
 * "John Resig":http://ejohn.org/ - querySelectorAll polyfill built on top of "Sizzle":http://sizzlejs.com/
 * "Kris Kowal":https://github.com/kriskowal - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
 * "Paul Irish":http://paulirish.com/ - requestAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+* "Eli Grey":http://eligrey.com - classList from http://purl.eligrey.com/github/classList.js
 
