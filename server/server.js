@@ -5,9 +5,9 @@ var
 
 // Needed modules
 fs = require('fs'),
-sys = require('sys'),
 url = require('url'),
 ejs = require('ejs'),
+util = require('util'),
 http = require('http'),
 path = require('path'),
 gzip = require('gzip'),
@@ -61,7 +61,7 @@ server = http.createServer(function(req, res) {
 	};
 	
 	// Log the request
-	sys.puts('[' + handle.id + '] HTTP ' + req.method + ' ' + req.url + ' (for ' + req.client.remoteAddress + ')');
+	util.puts('[' + handle.id + '] HTTP ' + req.method + ' ' + req.url + ' (for ' + req.client.remoteAddress + ')');
 	
 	switch (handle.url.segments[1]) {
 		case '':
@@ -183,7 +183,7 @@ server = http.createServer(function(req, res) {
 
 // Start listening
 server.listen(conf.port, function() {
-	sys.puts('Listening on port ' + conf.port);
+	util.puts('Listening on port ' + conf.port);
 });
 
 // ----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ function supportsGzip(handle) {
 
 // Log an error
 function logError(error) {
-	sys.puts('[E] ' + error);
+	util.puts('[E] ' + error);
 	console.trace();
 };
 
@@ -314,7 +314,7 @@ server.respond = function(handle, status, body) {
 	}
 	handle.res.end();
 	// Log the response
-	sys.puts('[' + handle.id + ']  Response - HTTP ' + status);
+	util.puts('[' + handle.id + ']  Response - HTTP ' + status);
 };
 
 // Sends a 200 OK
