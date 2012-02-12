@@ -11,6 +11,7 @@ util = require('util'),
 http = require('http'),
 path = require('path'),
 gzip = require('gzip'),
+mime = require('mime'),
 crypto = require('crypto'),
 uglify = require('uglify-js'),
 bufferjs = require('bufferjs'),
@@ -22,6 +23,7 @@ conf = require('./config'),
 CLIENT_PATH = path.join(__dirname, '../client'),
 POLYFILL_PATH = path.join(CLIENT_PATH, 'polyfills'),
 POLYFILL_CACHE_PATH = path.join(CLIENT_PATH, 'polyfill-cache'),
+RESOURCE_PATH = path.join(CLIENT_PATH, 'resources');
 CORE_FILE = 'core.js',
 MIN_EXT = '.min',
 GZIP_EXT = '.gz',
@@ -132,7 +134,7 @@ server = http.createServer(function(req, res) {
 			var cacheFile = polyfills.join(',') + '.js';
 			var content = '';
 			(function getNext() {
-				var next = polyfills.shift();
+				var next = safePath(polyfills.shift());
 				if (! path.existsSync(path.join(POLYFILL_PATH, next) + '.js')) {
 					return server.notFound(handle, '// Error 404: Not Found\n// Polyfill "' + next + '" does not exist');
 				}
@@ -173,6 +175,21 @@ server = http.createServer(function(req, res) {
 			}());
 		break;
 		
+		// Resource file
+		case 'resource':
+			if (! handle.url.query.f) {
+				return server.notFound(handle, 'Error 404: Not Found\nNo file given');
+			}
+			var file = path.join(RESOURCE_PATH, safePath(handle.url.query.f));
+			fs.readFile(file, function(err, data) {
+				if (err) {
+					return handle.error(err);
+				}
+				handle.responseHeaders['Content-Type'] = mime.lookup(file);
+				server.ok(handle, data);
+			});
+		break;
+		
 		// Unknown route
 		default:
 			server.notFound(handle, 'Unknown route ' + handle.url.pathname);
@@ -208,6 +225,13 @@ function supportsGzip(handle) {
 		}());
 	}
 	return handle.gzipSupport;
+};
+
+// Make sure a path contains no ..
+function safePath(file) {
+	return file.split('/').filter(function(segment) {
+		return (segment !== '..');
+	}).join('/');
 };
 
 // Log an error

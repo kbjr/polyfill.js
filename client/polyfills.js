@@ -31,6 +31,21 @@
 			return result;
 		}
 	},
+	
+	// HTML5 MicroData API
+	microdata: {
+		test: function() {
+			
+		},
+		prereqs: ['filter', 'indexof', 'foreach', 'some', 'bind']
+	},
+	
+	// PNG Alpha
+	pngalpha: {
+		test: function() {
+			return (Polyfill.ie <= 6);
+		}
+	},
 
 // ----------------------------------------------------------------------------
 //  DOM Methods
@@ -49,6 +64,7 @@
 		}
 	},
 	
+	// element.classList
 	classlist: {
 		test: function() {
 			return (! 'classList' in document.createElement('a'));

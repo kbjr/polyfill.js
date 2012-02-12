@@ -8,7 +8,8 @@
 		"gzip": "0.1.0",
 		"uglify-js": "1.0.4",
 		"bufferjs": "1.0.1",
-		"ejs": "0.4.3"
+		"ejs": "0.4.3",
+		"mime": "latest"
 	},
 	"repository": {
 		"type": "git",

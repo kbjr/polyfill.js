@@ -1,6 +1,9 @@
 window.Polyfill = (function() {
 	var self = { };
 	
+	// The URL used to load resources
+	var RESOURCE_URL = '<%- baseurl %>resource';
+	
 	// The URL used to load polyfills
 	var POLYFILL_URL = '<%- baseurl %>polyfill';
 	
@@ -95,6 +98,17 @@ window.Polyfill = (function() {
 	};
 	
 	/**
+	 * Get the URL for the resource engine
+	 */
+	self.resourceUrl = function(file) {
+		var url = RESOURCE_URL;
+		if (file) {
+			url += '?f=' + file;
+		}
+		return url;
+	};
+	
+	/**
 	 * Get the URL for the polyfill engine
 	 *
 	 * @access  public
@@ -108,6 +122,24 @@ window.Polyfill = (function() {
 		}
 		return url;
 	};
+	
+	/**
+	 * IE Version Detection
+	 *
+	 * @access  public
+	 * @type    number
+	 */
+	self.ie = (function(){
+		var undef;
+		var v = 3;
+		var div = document.createElement('div');
+		var all = div.getElementsByTagName('i');
+		while (
+			div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+			all[0]
+		);
+		return v > 4 ? v : undef;
+	}());
 
 // ----------------------------------------------------------------------------
 //  Internals
