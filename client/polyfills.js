@@ -32,18 +32,10 @@
 		}
 	},
 	
-	// HTML5 MicroData API
-	microdata: {
-		test: function() {
-			
-		},
-		prereqs: ['filter', 'indexof', 'foreach', 'some', 'bind']
-	},
-	
 	// PNG Alpha
 	pngalpha: {
 		test: function() {
-			return (Polyfill.ie <= 6);
+			return (Polyfill.ie === void(0) || Polyfill.ie > 6);
 		}
 	},
 
