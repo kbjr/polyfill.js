@@ -185,8 +185,23 @@ server = http.createServer(function(req, res) {
 				if (err) {
 					return handle.error(err);
 				}
+				var etag = hash('sha1', data.toString('base64')).substring(0, 7);
+				var ifNoneMatch = handle.req.headers['if-none-match'] || null;
+				if (ifNoneMatch === etag) {
+					return server.notModified(handle);
+				}
 				handle.responseHeaders['Content-Type'] = mime.lookup(file);
-				server.ok(handle, data);
+				handle.responseHeaders['ETag'] = etag;
+				if (supportsGzip(handle)) {
+					gzip(data, 9, function(err, data) {
+						if (err) {
+							return handle.error(err, 'Error: Could not gzip resource');
+						}
+						server.ok(handle, data);
+					});
+				} else {
+					server.ok(handle, data);
+				}
 			});
 		break;
 		

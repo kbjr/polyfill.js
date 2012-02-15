@@ -53,6 +53,7 @@ h3. Available Polyfills
 * dateparse (Date.parse)
 * requestanimationframe (window.requestAnimationFrame)
 * classlist (element.classList)
+* pngalpha (_experimental_)
 
 h3. Contributing A New Polyfill
 
@@ -66,4 +67,5 @@ h3. Special Thanks To
 * "Kris Kowal":https://github.com/kriskowal - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
 * "Paul Irish":http://paulirish.com/ - requestAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 * "Eli Grey":http://eligrey.com - classList from http://purl.eligrey.com/github/classList.js
+* "Angus Turnbull":http://www.twinhelix.com - PNG Alpha based on http://www.twinhelix.com/css/iepngfix/
 

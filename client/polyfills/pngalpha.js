@@ -3,6 +3,8 @@
  * with heavy modifications.
  *
  * @link  http://www.twinhelix.com/css/iepngfix/
+ *
+ * IE PNG Fix is licensed under LGPL Version 2.1 or later
  */
 
 (function() {
