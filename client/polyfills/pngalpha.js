@@ -192,15 +192,8 @@
 // ------------------------------------------------------------------
 //  Load the behavior
 	
-	if (! document.styleSheets.length) {
-		var root = document.getElementsByTagName('head')[0] || document.documentElement;
-		root.insertBefore(
-			document.createElement('style'), root.lastChild
-		);
-	}
-	
-	document.styleSheets[0].addRule('*',
-		'behavior:expression(IEPNGFix.process(this, 1)'
+	Polyfill.ie.addBehavior('*',
+		'expression(IEPNGFix.process(this, 1))'
 	);
 	
 }());

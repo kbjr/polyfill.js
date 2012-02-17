@@ -38,6 +38,13 @@
 			return (Polyfill.ie === void(0) || Polyfill.ie > 6);
 		}
 	},
+	
+	// addEventListener/removeEventListener
+	addeventlistener: {
+		test: function() {
+			return (! document.addEventListener);
+		}
+	},
 
 // ----------------------------------------------------------------------------
 //  DOM Methods

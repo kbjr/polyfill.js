@@ -56,7 +56,9 @@ window.Polyfill = (function() {
 							handlePolyfill(polyfill.prereqs[i]);
 						}
 					}
-					needed.push(polyfill.name);
+					if (! polyfill.isWrapper) {
+						needed.push(polyfill.name);
+					}
 				}
 			}
 		};
@@ -123,23 +125,43 @@ window.Polyfill = (function() {
 		return url;
 	};
 	
-	/**
-	 * IE Version Detection
-	 *
-	 * @access  public
-	 * @type    number
-	 */
-	self.ie = (function(){
-		var undef;
-		var v = 3;
-		var div = document.createElement('div');
-		var all = div.getElementsByTagName('i');
-		while (
-			div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-			all[0]
-		);
-		return v > 4 ? v : undef;
-	}());
+	self.ie = {
+		/**
+		 * IE Version Detection
+		 *
+		 * @access  public
+		 * @type    number
+		 */
+		version: (function(){
+			var undef;
+			var v = 3;
+			var div = document.createElement('div');
+			var all = div.getElementsByTagName('i');
+			while (
+				div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+				all[0]
+			);
+			return v > 4 ? v : undef;
+		}()),
+		/**
+		 * Add a new behavior to old IE
+		 *
+		 * @access  public
+		 * @param   string    element selector
+		 * @param   string    the behavior
+		 * @return  void
+		 */
+		addBehavior: function(selector, behavior) {
+			if (! document.styleSheets.length) {
+				var root = document.getElementsByTagName('head')[0] || document.documentElement;
+				root.insertBefore(
+					document.createElement('style'), root.lastChild
+				);
+			}
+			document.styleSheets[0].addRule(selector, 'behavior:' + behavior);
+		}
+	};
+	
 
 // ----------------------------------------------------------------------------
 //  Internals
@@ -228,6 +250,10 @@ window.Polyfill = (function() {
 		 * Any other prerequisite polyfills
 		 */
 		this.prereqs = params.prereqs || [ ];
+		/**
+		 * Is this a wrapper polyfill
+		 */
+		this.isWrapper = params.isWrapper || false;
 	};
 	
 	/**
