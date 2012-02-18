@@ -9,6 +9,9 @@
 if (document.attachEvent) {
 	(function() {
 		
+	// ------------------------------------------------------------------
+	//  The Polyfill Methods
+		
 		function addEventListener(target, type, listener, useCapture) {
 			return target.attachEvent('on' + type, listener);
 		}
@@ -208,6 +211,9 @@ if (document.attachEvent) {
 				};
 				obj.removeEventListener = function(type, listener, useCapture) {
 					return removeEventListener(obj, type, listener, useCapture);
+				};
+				obj.dispatchEvent = function(event) {
+					return dispatchEvent(obj, event);
 				};
 			}
 		};
