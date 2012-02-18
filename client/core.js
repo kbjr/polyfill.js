@@ -83,7 +83,9 @@ window.Polyfill = (function() {
 	 * @return  void
 	 */
 	self.loaded = function(polyfill) {
-		polyfills[polyfill] = 'loaded';
+		if (polyfills[polyfill].state !== 'failed') {
+			polyfills[polyfill].state = 'loaded';
+		}
 	};
 	
 	/**
@@ -123,6 +125,18 @@ window.Polyfill = (function() {
 			url += '?p=' + polys.join(',');
 		}
 		return url;
+	};
+	
+	/**
+	 * An event function called if a polyfill cannot be loaded
+	 * because of an absolute lack of some requirement
+	 *
+	 * @access  public
+	 * @type    function
+	 */
+	self.onnonsupport = null;
+	self._failed = function(polyfill) {
+		polyfills[polyfill].state = 'failed';
 	};
 	
 	self.ie = {
@@ -240,6 +254,7 @@ window.Polyfill = (function() {
 		 *   unneeded - The test was run and the polyfill is not needed
 		 *   loading  - The polyfill is being loaded
 		 *   loaded   - The polyfill has been loaded
+		 *   failed   - The polyfill failed to run successfully
 		 */
 		this.state = 'untested';
 		/**

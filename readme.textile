@@ -54,6 +54,8 @@ h3. Available Polyfills
 * requestanimationframe (window.requestAnimationFrame)
 * classlist (element.classList)
 * pngalpha (_experimental_)
+* addeventlistener ([window|document|element].addEventListener) (_experimental_)
+* clonenode (node.cloneNode)
 
 h3. Contributing A New Polyfill
 

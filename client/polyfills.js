@@ -38,13 +38,6 @@
 			return (Polyfill.ie === void(0) || Polyfill.ie > 6);
 		}
 	},
-	
-	// addEventListener/removeEventListener
-	addeventlistener: {
-		test: function() {
-			return (! document.addEventListener);
-		}
-	},
 
 // ----------------------------------------------------------------------------
 //  DOM Methods
@@ -66,10 +59,24 @@
 	// element.classList
 	classlist: {
 		test: function() {
-			return (! 'classList' in document.createElement('a'));
+			return ('classList' in document.createElement('a'));
 		}
 	},
-
+	
+	// addEventListener/removeEventListener
+	addeventlistener: {
+		test: function() {
+			return (!! document.addEventListener);
+		}
+	},
+	
+	// cloneNode
+	clonenode: {
+		test: function() {
+			return ('cloneNode' in document.createElement('a'));
+		}
+	},
+	
 // ----------------------------------------------------------------------------
 //  Events
 	

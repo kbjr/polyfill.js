@@ -6,8 +6,9 @@
  * detachEvent, and fireEvent.
  */
 
-if (document.attachEvent) {
+if (document.attachEvent && (window.Node || window.Element)) {
 	(function() {
+		var Node = window.Node || window.Element;
 		
 	// ------------------------------------------------------------------
 	//  The Polyfill Methods
@@ -218,12 +219,10 @@ if (document.attachEvent) {
 			}
 		};
 		
-		Polyfill._correctAddEventListener(window);
-		Polyfill._correctAddEventListener(document);
-		
-		Polyfill.ie.addBehavior('*',
-			'expression(Polyfill._correctAddEventListener(this))'
-		);
+		var toPolyfill = [ window, document, Node.prototype ];
+		for (var i = 0, c = toPolyfill.length; i < c; i++) {
+			Polyfill._correctAddEventListener(toPolyfill[i]);
+		}
 		
 	}());
 }
