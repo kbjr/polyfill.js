@@ -200,7 +200,7 @@
 	}
 	
 	document.styleSheets[0].addRule('*',
-		'behavior:expression(IEPNGFix.process(this, 1)'
+		'behavior:expression(IEPNGFix.process(this, 1))'
 	);
 	
 }());
