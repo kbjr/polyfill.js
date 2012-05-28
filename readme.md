@@ -69,8 +69,8 @@ I am still looking for more polyfills to add to this collection. If you have bui
 ### Special Thanks To
 
 * [Remy Sharp](http://remysharp.com/) - EventSource polyfill based on https://github.com/remy/polyfills/blob/master/EventSource.js
-* [Douglas Crockford](http://www.crockford.com/ - JSON Polyfill from his work)
-* [John Resig](http://ejohn.org/ - querySelectorAll polyfill built on top of [sizzle](http://sizzlejs.com/)
+* [Douglas Crockford](http://www.crockford.com/) - JSON Polyfill from his work
+* [John Resig](http://ejohn.org/) - querySelectorAll polyfill built on top of [sizzle](http://sizzlejs.com/)
 * [Kris Kowal](https://github.com/kriskowal) - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
 * [Paul Irish](http://paulirish.com/) - requestAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 * [Eli Grey](http://eligrey.com) - classList from http://purl.eligrey.com/github/classList.js
