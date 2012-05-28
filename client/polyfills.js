@@ -69,6 +69,14 @@
 			return (!! document.addEventListener);
 		}
 	},
+
+	// window.CustomEvent
+	customevent: {
+		test: function() {
+			return (!! window.CustomEvent);
+		},
+		prereqs: ['addeventlistener']
+	},
 	
 	// cloneNode
 	clonenode: {
