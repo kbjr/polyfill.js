@@ -91,6 +91,14 @@
 		}
 	},
 
+	// Promise
+	promise: {
+		test: function() {
+			return (!! window.Promise);
+		},
+		prereqs: ['setimmediate']
+	},
+
 // ----------------------------------------------------------------------------
 //  Prototype Methods
 	
@@ -214,6 +222,13 @@
 	getprototypeof: {
 		test: function() {
 			return (!! Object.getPrototypeOf);
+		}
+	},
+
+	// window.setImmediate
+	setimmediate: {
+		test: function() {
+			return (typeof window.setImmediate === 'function');
 		}
 	},
 	
