@@ -1,28 +1,28 @@
 {
-	"name": "polyfill",
-	"version": "0.1.1-a",
-	"author": "James Brumond <kbjr14@gmail.com> (http://www.jbrumond.me)",
-	"description": "Serves the polyfill.js client",
-	"homepage": "http://www.github.com/kbjr/polyfill.js",
-	"dependencies": {
-		"gzip": "0.1.0",
-		"uglify-js": "1.0.4",
-		"bufferjs": "1.0.1",
-		"ejs": "0.4.3",
-		"mime": "latest"
-	},
-	"repository": {
-		"type": "git",
-		"url": "http://www.github.com/kbjr/polyfill.js.git"
-	},
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://www.github.com/kbjr/jsk/raw/master/license.txt"
-		},
-		{
-			"type": "GPL",
-			"url": "http://www.github.com/kbjr/jsk/raw/master/license.txt"
-		}
-	]
+  "name": "polyfill",
+  "version": "0.2.0",
+  "author": "James Brumond <kbjr14@gmail.com> (http://www.jbrumond.me)",
+  "description": "Serves the polyfill.js client",
+  "homepage": "http://www.github.com/kbjr/polyfill.js",
+  "dependencies": {
+    "gzip": "0.1.0",
+    "uglify-js": "1.0.4",
+    "bufferjs": "1.0.1",
+    "ejs": "0.4.3",
+    "mime": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://www.github.com/kbjr/polyfill.js.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.github.com/kbjr/jsk/raw/master/license.txt"
+    },
+    {
+      "type": "GPL",
+      "url": "http://www.github.com/kbjr/jsk/raw/master/license.txt"
+    }
+  ]
 }
