@@ -13,17 +13,19 @@ module.exports = function() {
 	
 	// Delete the core files
 	var coreJs = path.join(CLIENT_PATH, 'core.js');
-	fs.unlink(coreJs + '.min');
-	fs.unlink(coreJs + '.min.gz');
+	fs.unlink(coreJs + '.min', noop);
+	fs.unlink(coreJs + '.min.gz', noop);
 	
 	// Delete the polyfill files
 	fs.readdir(POLYFILL_CACHE_PATH, function(err, files) {
 		if (! err) {
 			for (var i = 0, c = files.length; i < c; i++) {
 				var file = path.join(POLYFILL_CACHE_PATH, files[i]);
-				fs.unlink(file);
+				fs.unlink(file, noop);
 			}
 		}
 	});
+
+	function noop() { }
 	
 };

@@ -1,38 +1,37 @@
-// Clear old cache files
+
+// Clear old cache files upon starting the server
 (require('./clear-cache')());
 
-var
-
 // Needed modules
-fs = require('fs'),
-url = require('url'),
-ejs = require('ejs'),
-util = require('util'),
-http = require('http'),
-path = require('path'),
-gzip = require('gzip'),
-mime = require('mime'),
-crypto = require('crypto'),
-uglify = require('uglify-js'),
-bufferjs = require('bufferjs'),
+var fs        = require('fs');
+var url       = require('url');
+var ejs       = require('ejs');
+var util      = require('util');
+var http      = require('http');
+var path      = require('path');
+var zlib      = require('zlib');
+var mime      = require('mime');
+var crypto    = require('crypto');
+var uglify    = require('uglify-js');
+var bufferjs  = require('bufferjs');
 
 // Load the config
-conf = require('./config'),
+var conf = require('./config');
 
 // File path constants
-CLIENT_PATH = path.join(__dirname, '../client'),
-POLYFILL_PATH = path.join(CLIENT_PATH, 'polyfills'),
-POLYFILL_CACHE_PATH = path.join(CLIENT_PATH, 'polyfill-cache'),
-RESOURCE_PATH = path.join(CLIENT_PATH, 'resources');
-CORE_FILE = 'core.js',
-MIN_EXT = '.min',
-GZIP_EXT = '.gz',
+var CLIENT_PATH = path.join(__dirname, '../client');
+var POLYFILL_PATH = path.join(CLIENT_PATH, 'polyfills');
+var POLYFILL_CACHE_PATH = path.join(CLIENT_PATH, 'polyfill-cache');
+var RESOURCE_PATH = path.join(CLIENT_PATH, 'resources');
+var CORE_FILE = 'core.js';
+var MIN_EXT = '.min';
+var GZIP_EXT = '.gz';
 
 // The request handle ID
-nextId = 1000,
+var nextId = 1000;
 
 // Create the http server
-server = http.createServer(function(req, res) {
+var server = http.createServer(function(req, res) {
 	
 	var handle = {
 		id: nextId++,
@@ -193,7 +192,7 @@ server = http.createServer(function(req, res) {
 				handle.responseHeaders['Content-Type'] = mime.lookup(file);
 				handle.responseHeaders['ETag'] = etag;
 				if (supportsGzip(handle)) {
-					gzip(data, 9, function(err, data) {
+					zlib.gzip(data, function(err, data) {
 						if (err) {
 							return handle.error(err, 'Error: Could not gzip resource');
 						}
@@ -268,7 +267,7 @@ function gzipJavaScriptFile(ugly, file, cacheDir, after) {
 	path.exists(gzFile, function(exists) {
 		if (! exists) {
 			// Gzip the source
-			gzip(ugly, 9, function(err, data) {
+			zlib.gzip(ugly, function(err, data) {
 				if (err) {
 					return after([err, 'Error: Could not gzip source code']);
 				}
