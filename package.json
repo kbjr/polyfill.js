@@ -1,6 +1,6 @@
 {
   "name": "polyfill",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "author": "James Brumond <kbjr14@gmail.com> (http://www.jbrumond.me)",
   "description": "Serves the polyfill.js client",
   "homepage": "http://www.github.com/kbjr/polyfill.js",
