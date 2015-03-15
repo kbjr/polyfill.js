@@ -11,7 +11,7 @@
 	},
 	
 	// HTML5 localStorage
-	storage: {
+	localstorage: {
 		test: function() {
 			return (!! window.localStorage);
 		},

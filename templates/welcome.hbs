@@ -19,6 +19,31 @@
 			padding-bottom: 35px;
 		}
 
+		footer {
+			/**/
+		}
+
+		footer:after {
+			display: block;
+			visibility: hidden;
+			content: " ";
+			height: 0;
+			line-height: 0;
+			clear: both;
+		}
+
+		footer .left {
+			float: left;
+		}
+
+		footer p {
+			margin: 0.5em;
+		}
+
+		footer p.donate {
+			float: right;
+		}
+
 		h1 {
 			margin-bottom: 0;
 		}
@@ -191,7 +216,7 @@
 			</p>
 
 			{{#prism "markup"}}
-				&lt;script type="text/javascript" src="{{ baseurl }}core"&gt;&lt;/script&gt;
+				&lt;script type="text/javascript" src="{{ ../baseurl }}core"&gt;&lt;/script&gt;
 			{{/prism}}
 
 			<p>
@@ -211,7 +236,7 @@
 			</p>
 
 			{{#prism "plain"}}
-				http://polyfill.herokuapp.com/polyfill?p=eventsource,foreach&amp;id=1
+				{{ ../baseurl }}polyfill?p=eventsource,foreach&amp;id=1
 			{{/prism}}
 
 			<p>
@@ -235,8 +260,11 @@
 	<hr />
 
 	<footer>
-		Copyright &copy; 2015 <a href="http://www.jbrumond.me">James Brumond</a><br />
-		<a href="https://www.github.com/kbjr/polyfill.js">Fork me on GitHub!</a>
+		<div class="left">
+			<p class="copyright">Copyright &copy; 2015 <a href="http://www.jbrumond.me">James Brumond</a></p>
+			<p class="github"><a href="https://www.github.com/kbjr/polyfill.js">Fork me on GitHub!</a></p>
+		</div>
+		<p class="donate"><a href='https://pledgie.com/campaigns/28605'><img alt='Click here to lend your support to: Polyfill.js and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28605.png?skin_name=chrome' border='0' ></a></p>
 	</footer>
 
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.js"></script>

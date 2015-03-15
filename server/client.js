@@ -2,6 +2,7 @@
 var fs          = require('fs');
 var path        = require('path');
 var config      = require('../config');
+var uglify      = require('uglify-js');
 var handlebars  = require('handlebars');
 var Promise     = require('promise-es6').Promise;
 
@@ -56,6 +57,8 @@ exports.listPolyfills = function() {
 exports.buildCore = function() {
 	var core = cache.lookup('core');
 
+	// 
+
 	return core.getSource()
 		.then(function(source) {
 			// 
@@ -70,10 +73,11 @@ exports.buildCore = function() {
 // @param {modules} a list (string, comma delimited) of modules
 // 
 function Module(modules) {
-	this.modules   = (modules === 'core') ? 'core' : modules.split(',');
-	this.source    = null;
-	this.compiled  = null;
-	this.gzipped   = null;
+	this.modules     = (modules === 'core') ? 'core' : modules.split(',');
+	this.moduleList  = modules;
+	this.source      = null;
+	this.compiled    = null;
+	this.gzipped     = null;
 };
 
 // 
@@ -83,6 +87,8 @@ function Module(modules) {
 // 
 Module.prototype.fetchSource = function() {
 	var self = this;
+
+	log('Fetching source for ' + this.moduleList);
 
 	if (this.modules === 'core') {
 		return Promise.all([ fetchSourceFile('core.js'), fetchSourceFile('polyfills.js') ])
@@ -124,6 +130,39 @@ Module.prototype.getSource = function() {
 		});
 };
 
+// 
+// Compile the source code using uglify-js
+// 
+// @return promise
+// 
+Module.prototype.compile = function() {
+	var self = this;
+
+	log('Compiling source for ' + this.moduleList);
+	return this.getSource()
+		.then(function(source) {
+			self.compiled = uglify.minify(source, { fromString: true });
+		});
+};
+
+// 
+// Get the compiled source for the modules
+// 
+// @return promise
+// 
+Module.prototype.getCompiled = function() {
+	var self = this;
+
+	if (this.compiled) {
+		return Promise.resolve(this.compiled);
+	}
+
+	return this.compile()
+		.then(function() {
+			return self.compiled;
+		});
+};
+
 // -------------------------------------------------------------
 
 // 
@@ -153,4 +192,13 @@ function fetchSourceFile(file) {
 // 
 function fetchPolyfillSource(polyfill) {
 	return fetchSourceFile('polyfills/' + polyfill + '.js');
+}
+
+// 
+// 
+// 
+function log(message) {
+	if (config.compilerLogging) {
+		console.log('[COMP] ' + message);
+	}
 }
