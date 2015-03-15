@@ -3,7 +3,9 @@
 <a href='https://pledgie.com/campaigns/28605'><img alt='Click here to lend your support to: Polyfill.js and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28605.png?skin_name=chrome' border='0' ></a>
 
 Version: 2.0.0
+
 Copyright 2015 James Brumond
+
 Licensed under ISC
 
 ### A JavaScript Polyfill Framework
@@ -61,7 +63,6 @@ That loaded script is a compacted (using [uglify-js](https://github.com/mishoo/U
 * dateparse (Date.parse)
 * requestanimationframe (window.requestAnimationFrame)
 * classlist (element.classList)
-* pngalpha (_experimental_)
 
 ### Contributing A New Polyfill
 
@@ -75,5 +76,4 @@ I am still looking for more polyfills to add to this collection. If you have bui
 * [Kris Kowal](https://github.com/kriskowal) - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
 * [Paul Irish](http://paulirish.com/) - requestAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 * [Eli Grey](http://eligrey.com) - classList from http://purl.eligrey.com/github/classList.js
-* [Angus Turnbull](http://www.twinhelix.com) - PNG Alpha based on http://www.twinhelix.com/css/iepngfix/
 
