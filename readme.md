@@ -29,7 +29,7 @@ Polyfill.needs(['localstorage', 'eventsource', 'foreach'], function() {
 Now, let's assume that your browser has localStorage, but not EventSource or forEach. polyfill.js figures this out and dynamically includes a script that loads polyfills for just those features. That request would look like this:
 
 ```
-http://polyfill.herokuapp.com/polyfill?p=eventsource,foreach&id=1
+http://polyfill.herokuapp.com/polyfill?p=eventsource,foreach
 ```
 
 That loaded script is a compacted (using [uglify-js](https://github.com/mishoo/UglifyJS)) and gzipped package containing your polyfills. Nothing extra. No waste.
@@ -72,7 +72,7 @@ I am still looking for more polyfills to add to this collection. If you have bui
 
 * [Remy Sharp](http://remysharp.com/) - EventSource polyfill based on https://github.com/remy/polyfills/blob/master/EventSource.js
 * [Douglas Crockford](http://www.crockford.com/) - JSON Polyfill from his work
-* [John Resig](http://ejohn.org/) - querySelectorAll polyfill built on top of "Sizzle":http://sizzlejs.com/
+* [John Resig](http://ejohn.org/) - querySelectorAll polyfill built on top of [Sizzle](http://sizzlejs.com/)
 * [Kris Kowal](https://github.com/kriskowal) - Date.parse and Date.toISOString based on https://github.com/kriskowal/es5-shim
 * [Paul Irish](http://paulirish.com/) - requestAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 * [Eli Grey](http://eligrey.com) - classList from http://purl.eligrey.com/github/classList.js
