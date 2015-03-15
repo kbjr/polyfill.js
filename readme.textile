@@ -6,6 +6,8 @@ Version: 0.1.1-a
 Copyright 2011 James Brumond
 Dual licensed under MIT and GPL
 
+<a href='https://pledgie.com/campaigns/28605'><img alt='Click here to lend your support to: Polyfill.js and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28605.png?skin_name=chrome' border='0' ></a>
+
 h3. A JavaScript Polyfill Framework
 
 polyfill.js is a *very lightweight* JavaScript framework for replacing missing features in outdated browsers. It can be loaded simply by adding the following script tag to your document:
