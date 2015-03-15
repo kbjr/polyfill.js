@@ -2,10 +2,10 @@ window.Polyfill = (function() {
 	var self = { };
 	
 	// The URL used to load resources
-	var RESOURCE_URL = '<%- baseurl %>resource';
+	var RESOURCE_URL = '{{ baseurl }}resource';
 	
 	// The URL used to load polyfills
-	var POLYFILL_URL = '<%- baseurl %>polyfill';
+	var POLYFILL_URL = '{{ baseurl }}polyfill';
 	
 	// Used for keeping track of requests
 	var nextId = 1;
@@ -15,7 +15,7 @@ window.Polyfill = (function() {
 	 * The list of polyfills.
 	 * This is inserted by the compiler from the file ./client/polyfills.js
 	 */
-	var polyfills = <%- polyfills %>;
+	var polyfills = {{ polyfills }};
 	
 // ----------------------------------------------------------------------------
 //  External Interface

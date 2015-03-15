@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Polyfill.js Server</title>
+
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" />
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css" />
+
+	<style type="text/css">
+		
+		body {
+			color: #444;
+			font-family: "Open Sans", sans-serif;
+			padding: 20px 50px;
+		}
+
+		header, section {
+			padding-bottom: 35px;
+		}
+
+		h1 {
+			margin-bottom: 0;
+		}
+
+		a {
+			color: #28b;
+			text-decoration: none;
+		}
+
+		a:hover {
+			color: #069;
+		}
+
+		/* http://prismjs.com/download.html?themes=prism&languages=markup+css+clike+javascript */
+		/**
+		 * prism.js default theme for JavaScript, CSS and HTML
+		 * Based on dabblet (http://dabblet.com)
+		 * @author Lea Verou
+		 */
+
+		code[class*="language-"],
+		pre[class*="language-"] {
+			color: black;
+			text-shadow: 0 1px white;
+			font-family: Consolas, Monaco, 'Andale Mono', monospace;
+			direction: ltr;
+			text-align: left;
+			white-space: pre;
+			word-spacing: normal;
+			word-break: normal;
+			line-height: 1.5;
+
+			-moz-tab-size: 4;
+			-o-tab-size: 4;
+			tab-size: 4;
+
+			-webkit-hyphens: none;
+			-moz-hyphens: none;
+			-ms-hyphens: none;
+			hyphens: none;
+		}
+
+		pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+		code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+			text-shadow: none;
+			background: #b3d4fc;
+		}
+
+		pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+		code[class*="language-"]::selection, code[class*="language-"] ::selection {
+			text-shadow: none;
+			background: #b3d4fc;
+		}
+
+		@media print {
+			code[class*="language-"],
+			pre[class*="language-"] {
+				text-shadow: none;
+			}
+		}
+
+		/* Code blocks */
+		pre[class*="language-"] {
+			padding: 1em;
+			margin: .5em 0;
+			overflow: auto;
+		}
+
+		:not(pre) > code[class*="language-"],
+		pre[class*="language-"] {
+			background: #f5f2f0;
+		}
+
+		/* Inline code */
+		:not(pre) > code[class*="language-"] {
+			padding: .1em;
+			border-radius: .3em;
+		}
+
+		.token.comment,
+		.token.prolog,
+		.token.doctype,
+		.token.cdata {
+			color: slategray;
+		}
+
+		.token.punctuation {
+			color: #999;
+		}
+
+		.namespace {
+			opacity: .7;
+		}
+
+		.token.property,
+		.token.tag,
+		.token.boolean,
+		.token.number,
+		.token.constant,
+		.token.symbol,
+		.token.deleted {
+			color: #905;
+		}
+
+		.token.selector,
+		.token.attr-name,
+		.token.string,
+		.token.char,
+		.token.builtin,
+		.token.inserted {
+			color: #690;
+		}
+
+		.token.operator,
+		.token.entity,
+		.token.url,
+		.language-css .token.string,
+		.style .token.string {
+			color: #a67f59;
+			background: hsla(0, 0%, 100%, .5);
+		}
+
+		.token.atrule,
+		.token.attr-value,
+		.token.keyword {
+			color: #07a;
+		}
+
+		.token.function {
+			color: #DD4A68;
+		}
+
+		.token.regex,
+		.token.important,
+		.token.variable {
+			color: #e90;
+		}
+
+		.token.important,
+		.token.bold {
+			font-weight: bold;
+		}
+		.token.italic {
+			font-style: italic;
+		}
+
+		.token.entity {
+			cursor: help;
+		}
+
+	</style>
+
+</head>
+<body>
+
+	<header>
+		<h1>Polyfill.js</h1>
+		<p>Server is ready.</p>
+		<a href="{{ baseurl }}core">Client Core</a>
+	</header>
+
+	<hr />
+	
+	<main>
+		<section>
+			<h2>A JavaScript Polyfill Framework</h2>
+
+			<p>
+				Polyfill.js is a very lightweight JavaScript framework for replacing missing features in outdated browsers. It can be loaded simply by adding the following script tag to your document:
+			</p>
+
+			{{#prism "markup"}}
+				&lt;script type="text/javascript" src="{{ baseurl }}core"&gt;&lt;/script&gt;
+			{{/prism}}
+
+			<p>
+				The core for polyfill.js is extremely small and you only have to load the polyfills you need. For example, if you want to use <code>localStorage</code>, <code>EventSource</code>, and <code>Array.prototype.forEach</code> in your application, you tell polyfill.js that you need them, it checks if you already have them, and then loads only what you need. You would do this by using the <code>Polyfill.needs()</code> method, like this:
+			</p>
+
+			{{#prism "javascript"}}
+				Polyfill.needs(['localstorage', 'eventsource', 'foreach'], function() {
+				    
+				    // Do something with those functionalities
+				    	
+				});
+			{{/prism}}
+
+			<p>
+				Now, let’s assume that your browser has localStorage, but not EventSource or forEach. polyfill.js figures this out and dynamically includes a script that loads polyfills for just those features. That request would look like this:
+			</p>
+
+			{{#prism "plain"}}
+				http://polyfill.herokuapp.com/polyfill?p=eventsource,foreach&amp;id=1
+			{{/prism}}
+
+			<p>
+				That loaded script is a compacted (using <a href="">uglify-js</a>) and gzipped package containing your polyfills. Nothing extra. No waste.
+			</p>
+		</section>
+
+		<hr />
+
+		<section>
+			<h2>Available Polyfills:</h2>
+
+			<ul>
+				{{#each polyfills}}
+				<li>{{ this }}</li>
+				{{/each}}
+			</ul>
+		</section>
+	</main>
+
+	<hr />
+
+	<footer>
+		Copyright &copy; 2015 <a href="http://www.jbrumond.me">James Brumond</a><br />
+		<a href="https://www.github.com/kbjr/polyfill.js">Fork me on GitHub!</a>
+	</footer>
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.js"></script>
+</body>
+</html>

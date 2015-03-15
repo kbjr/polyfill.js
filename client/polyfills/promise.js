@@ -4,27 +4,8 @@
 
 (function() {
 	
+	var exports = { };
 	var _global = this;
-
-	// 
-	// Install the Promise constructor into the global scope, if and only if a
-	// native promise constructor does not exist.
-	// 
-	exports.install = function() {
-		if (! _global.Promise) {
-			_global.Promise = Promise;
-		}
-	};
-
-	// 
-	// Remove global.Promise, but only if it is our version
-	// 
-	exports.uninstall = function() {
-		if (_global.Promise && _global.Promise === Promise) {
-			_global.Promise = void(0);
-			delete _global.Promise;
-		}
-	};
 
 	// 
 	// State constants
@@ -39,7 +20,7 @@
 	// 
 	// @param {callback} the callback that defines the process to occur
 	// 
-	var Promise = exports.Promise = function(callback) {
+	var Promise = _global.Promise = exports.Promise = function(callback) {
 		// Check that a function argument was given
 		if (typeof callback !== 'function') {
 			throw new TypeError('Promise constructor takes a function argument');

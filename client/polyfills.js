@@ -31,13 +31,6 @@
 			return result;
 		}
 	},
-	
-	// PNG Alpha
-	pngalpha: {
-		test: function() {
-			return (Polyfill.ie === void(0) || Polyfill.ie > 6);
-		}
-	},
 
 // ----------------------------------------------------------------------------
 //  DOM Methods
@@ -229,16 +222,6 @@
 	setimmediate: {
 		test: function() {
 			return (typeof window.setImmediate === 'function');
-		}
-	},
-	
-// ----------------------------------------------------------------------------
-//  Testing
-	
-	// A Fake Polyfill Used In Testing
-	test: {
-		test: function() {
-			return false;
 		}
 	}
 	
