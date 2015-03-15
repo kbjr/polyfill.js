@@ -15,8 +15,7 @@ var Request = module.exports = function(req, res) {
 
 	this.req = req;
 	this.res = res;
-
-	this.url = url.parse(this.req.url);
+	this.url = url.parse(this.req.url, true);
 
 	this.log('HTTP ' + this.req.method + ' ' + this.req.url + ' (for ' + req.client.remoteAddress + ')');
 };
@@ -47,7 +46,7 @@ Request.prototype.supportsGzip = function() {
 		return this._gzip;
 	}
 
-	if (! conf.gzip) {
+	if (! config.allowGzip) {
 		return (this._gzip = false);
 	}
 
@@ -84,23 +83,55 @@ Request.prototype.send = function(status, headers, content) {
 // 
 // @param {type} the content type (eg. "text/plain")
 // @param {content} the response body
+// @param {opts} options
 // @return void
 // 
-Request.prototype.ok = function(type, content) {
+Request.prototype.ok = function(type, content, opts) {
 	var headers = {
-		'content-type': type
+		'Content-Type': type
 	};
+
+	if (opts && opts.gzipped) {
+		headers['Content-Encoding'] = 'gzip';
+	}
+
+	if (opts && opts.etag) {
+		headers['ETag'] = 'W/"' + opts.etag + '"';
+	}
 
 	this.send(200, headers, content);
 };
 
 // 
-// Send a 400 Not Found response to the client
+// Send a 404 Not Found response to the client
 // 
 // @return void
 // 
 Request.prototype.notfound = function() {
-	this.send(404, {'content-type': 'application/json'}, JSON.stringify({
+	var res = JSON.stringify({
 		error: 'Not Found'
-	}));
+	});
+
+	this.send(404, {'Content-Type': 'application/json'}, res);
+};
+
+// 
+// Send a 401 Bad Request response to the client
+// 
+// @param {err} an error message
+// @return void
+// 
+Request.prototype.badRequest = function(err) {
+	var res = JSON.stringify({
+		error: err
+	});
+
+	this.send(400, {'Content-Type': 'application/json'}, res);
+};
+
+// 
+// 
+// 
+Request.prototype.error = function() {
+	// 
 };

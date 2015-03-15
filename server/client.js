@@ -1,6 +1,8 @@
 
 var fs          = require('fs');
 var path        = require('path');
+var zlib        = require('zlib');
+var crypto      = require('crypto');
 var config      = require('../config');
 var uglify      = require('uglify-js');
 var handlebars  = require('handlebars');
@@ -52,17 +54,32 @@ exports.listPolyfills = function() {
 // -------------------------------------------------------------
 
 // 
+// Get the client core code
 // 
+// @param {opts} options
+// @return promise
 // 
-exports.buildCore = function() {
-	var core = cache.lookup('core');
+exports.getCore = function(opts) {
+	return exports.getPolyfills(['core'], opts);
+};
 
-	// 
+// 
+// Get polyfill code
+// 
+// @param {polyfills} an array of polyfill names
+// @param {opts} options
+// @return promise
+// 
+exports.getPolyfills = function(polyfills, opts) {
+	var module = exports.lookup(polyfills);
+	var content = opts.gzip ? module.getGzipped() : module.getCompiled();
 
-	return core.getSource()
-		.then(function(source) {
-			// 
-		});
+	return content.then(function(content) {
+		return {
+			hash: module.hash,
+			content: content
+		};
+	});
 };
 
 // -------------------------------------------------------------
@@ -78,6 +95,7 @@ function Module(modules) {
 	this.source      = null;
 	this.compiled    = null;
 	this.gzipped     = null;
+	this.hash        = null;
 };
 
 // 
@@ -103,12 +121,18 @@ Module.prototype.fetchSource = function() {
 					baseurl: config.baseUrl,
 					polyfills: roster
 				});
+				self.hash = hash(self.source);
 			});
 	}
 
 	return Promise.all(this.modules.map(fetchPolyfillSource))
 		.then(function(modules) {
+			modules = modules.map(function(source, index) {
+				return source + ';Polyfill.loaded("' + self.modules[index] + '");';
+			});
+
 			self.source = modules.join('\n;');
+			self.hash = hash(self.source);
 		});
 };
 
@@ -141,7 +165,7 @@ Module.prototype.compile = function() {
 	log('Compiling source for ' + this.moduleList);
 	return this.getSource()
 		.then(function(source) {
-			self.compiled = uglify.minify(source, { fromString: true });
+			self.compiled = uglify.minify(source, { fromString: true }).code;
 		});
 };
 
@@ -160,6 +184,42 @@ Module.prototype.getCompiled = function() {
 	return this.compile()
 		.then(function() {
 			return self.compiled;
+		});
+};
+
+// 
+// Gzip the compiled code to get a final product
+// 
+// @return promise
+// 
+Module.prototype.gzip = function() {
+	var self = this;
+
+	log('Gzipping compiled source for ' + this.moduleList);
+	return this.getCompiled()
+		.then(function(compiled) {
+			return gzip(compiled);
+		})
+		.then(function(gzipped) {
+			self.gzipped = gzipped;
+		});
+};
+
+// 
+// Get the gzipped source for the modules
+// 
+// @return promise
+// 
+Module.prototype.getGzipped = function() {
+	var self = this;
+
+	if (this.gzipped) {
+		return Promise.resolve(this.gzipped);
+	}
+
+	return this.gzip()
+		.then(function() {
+			return self.gzipped;
 		});
 };
 
@@ -192,6 +252,37 @@ function fetchSourceFile(file) {
 // 
 function fetchPolyfillSource(polyfill) {
 	return fetchSourceFile('polyfills/' + polyfill + '.js');
+}
+
+// 
+// Gzip a content string
+// 
+// @param {content} the content to gzip
+// @return promise
+// 
+function gzip(content) {
+	return new Promise(function(resolve, reject) {
+		zlib.gzip(content, { level: 9 }, function(err, result) {
+			if (err) {
+				return reject(err);
+			}
+
+			resolve(result);
+		});
+	});
+}
+
+// 
+// Hash the given content using SHA1
+// 
+// @param {content} the string to hash
+// @return string
+// 
+function hash(content) {
+	var shasum = crypto.createHash('sha1');
+
+	shasum.update(content);
+	return shasum.digest('hex');
 }
 
 // 

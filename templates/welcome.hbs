@@ -44,6 +44,10 @@
 			float: right;
 		}
 
+		p code {
+			color: #373;
+		}
+
 		h1 {
 			margin-bottom: 0;
 		}
@@ -202,6 +206,7 @@
 	<header>
 		<h1>Polyfill.js</h1>
 		<p>Server is ready.</p>
+		<pre>{{ memory }}</pre>
 		<a href="{{ baseurl }}core">Client Core</a>
 	</header>
 
@@ -236,7 +241,7 @@
 			</p>
 
 			{{#prism "plain"}}
-				{{ ../baseurl }}polyfill?p=eventsource,foreach&amp;id=1
+				{{ ../baseurl }}polyfill?p=eventsource,foreach
 			{{/prism}}
 
 			<p>

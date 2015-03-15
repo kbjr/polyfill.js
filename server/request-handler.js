@@ -20,24 +20,60 @@ exports = module.exports = function(req, res) {
 			var polyfills = client.listPolyfills();
 			var content = templates.render('welcome', {
 				polyfills: polyfills,
-				baseurl: config.baseUrl
+				baseurl: config.baseUrl,
+				memory: JSON.stringify(process.memoryUsage(), null, '  ')
 			});
 
 			request.ok('text/html', content);
 		break;
 
-		// 
+		// Load the client core
 		case '/core':
-			// 
+			var gzip = request.supportsGzip();
+			client.getCore({ gzip: gzip })
+				.then(function(core) {
+					request.ok('application/javascript', core.content, {
+						gzipped: gzip,
+						etag: core.hash
+					});
+				})
+				.catch(function(err) {
+					console.error(err && err.stack);
+				});
 		break;
 
-		// 
-		case 'polyfill':
-			// 
+		// Compile and return a polyfill package
+		case '/polyfill':
+			var gzip = request.supportsGzip();
+			var polyfills = request.url.query.p.split(',');
+
+			if (polyfills.some(isNotAlpha)) {
+				return request.badRequest('Bad polyfill list format');
+			}
+
+			polyfills = unique(polyfills);
+
+			client.getPolyfills(polyfills, { gzip: gzip })
+				.then(function(polyfills) {
+					request.ok('application/javascript', polyfills.content, {
+						gzipped: gzip,
+						etag: polyfills.hash
+					});
+				})
+				.catch(function(err) {
+					console.error(err && err.stack);
+					if (err.message.indexOf('ENOENT, open') >= 0) {
+						request.notfound();
+					}
+				});
 		break;
 
-		// 
-		case 'resource':
+		// Load a resource file
+		case '/resource':
+			// 
+			// NOTE
+			//   I may add this feature back if it ends up being needed for some polyfills,
+			//   but for now, I don't see the need.
 			// 
 		break;
 
@@ -47,3 +83,22 @@ exports = module.exports = function(req, res) {
 		break;
 	}
 };
+
+// -------------------------------------------------------------
+
+var notAlpha = /[^a-zA-Z]/;
+function isNotAlpha(string) {
+	return notAlpha.test(string);
+}
+
+function unique(arr) {
+	var result = [ ];
+
+	arr.forEach(function(value) {
+		if (result.indexOf(value) < 0) {
+			result.push(value);
+		}
+	});
+
+	return result;
+}
