@@ -68,6 +68,27 @@ That loaded script is a compacted (using [uglify-js](https://github.com/mishoo/U
 
 I am still looking for more polyfills to add to this collection. If you have built a polyfill and would like it added, feel free to open an issue with more information, or send a pull request (but please stick to the conventions already in use in the code). Also, any polyfills should run completely automatically (they should require *no* extra action by developers to use) and should follow the appropriate specification as closely as possible.
 
+### Running the server
+
+To run your own instance of the polyfill server, the first thing you need to do is to pull down the code.
+
+```bash
+$ git clone git://github.com/kbjr/polyfill.js.git
+$ cd polyfill.js
+```
+
+You will need [node.js](https://nodejs.org/) `@0.12.x`, so make sure you have that. Then, install the dependencies:
+
+```bash
+$ npm install
+```
+
+Next, open up the `config.js` file. There are a few things here you can play with, but nothing all that impressive. We're looking for the `baseUrl` value. You need to change that to the origin you will be running the server on. (_note: this value needs to have a trailing slash, it won't work without one_). At this point, the server can be started.
+
+```
+$ node server/app.js
+```
+
 ### Special Thanks To
 
 * [Remy Sharp](http://remysharp.com/) - EventSource polyfill based on https://github.com/remy/polyfills/blob/master/EventSource.js
